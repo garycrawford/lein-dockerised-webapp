@@ -9,10 +9,10 @@
               :ns-name (sanitize-ns name)
               :sanitized (name-to-path name)}]
     (->files data ["project.clj" (render "project.clj" data)]
-["dev/dev.clj" (render "dev.clj" data)]
-["dev/user.clj" (render "user.clj" data)]
-["src/{{sanitized}}/zygote.clj" (render "zygote.clj" data)]
-["src/{{sanitized}}/web_server.clj" (render "web_server.clj" data)]
-["src/{{sanitized}}/system.clj" (render "system.clj" data)]
-["resources/routes.txt" (render "routes.txt")]
-)))
+                  ["Dockerfile" (render "Dockerfile" data)]
+                  ["dev/dev.clj" (render "dev.clj" data)]
+                  ["dev/user.clj" (render "user.clj" data)]
+                  ["src/{{sanitized}}/zygote.clj" (render "zygote.clj" data)]
+                  ["src/{{sanitized}}/web_server.clj" (render "web_server.clj" data)]
+                  ["src/{{sanitized}}/system.clj" (render "system.clj" data)]
+                  ["resources/routes.txt" (render "routes.txt")])))
