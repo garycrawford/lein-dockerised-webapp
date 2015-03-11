@@ -10,6 +10,7 @@
               :sanitized (name-to-path name)}]
     (->files data ["project.clj" (render "project.clj" data)]
                   ["Dockerfile" (render "Dockerfile" data)]
+                  [".dockerignore" (render "dockerignore" data)]
                   ["dev/dev.clj" (render "dev.clj" data)]
                   ["dev/user.clj" (render "user.clj" data)]
                   ["src/{{sanitized}}/zygote.clj" (render "zygote.clj" data)]
