@@ -15,4 +15,6 @@
                   ["src/{{sanitized}}/zygote.clj" (render "zygote.clj" data)]
                   ["src/{{sanitized}}/web_server.clj" (render "web_server.clj" data)]
                   ["src/{{sanitized}}/system.clj" (render "system.clj" data)]
+                  ["src/{{sanitized}}/metrics.clj" (render "metrics.clj" data)]
+                  ["config/dev.env" (render "dev.env" data)]
                   ["resources/routes.txt" (render "routes.txt")])))

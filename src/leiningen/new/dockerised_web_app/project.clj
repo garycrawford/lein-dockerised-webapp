@@ -8,7 +8,11 @@
                  [ring/ring-json "0.3.1"]        
                  [ring/ring-defaults "0.1.4"] 
                  [scenic "0.2.3"]
-                 [com.stuartsierra/component "0.2.3"]]
+                 [com.stuartsierra/component "0.2.3"]
+                 [metrics-clojure "2.3.0"]
+                 [metrics-clojure-jvm "2.3.0"]
+                 [metrics-clojure-graphite "2.3.0"]
+                 [environ "1.0.0"]]
 
   :repl-options {:init-ns user
                  :welcome (println "Type (dev) to start")}
