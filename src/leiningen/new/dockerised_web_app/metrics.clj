@@ -1,10 +1,11 @@
 (ns {{ns-name}}.metrics
   (:require 
     [com.stuartsierra.component :as component]
-    [metrics.jvm.core :refer [instrument-jvm]]
+    [metrics.jvm.core :as jvm]
     [metrics.reporters.graphite :as graphite]
     [metrics.core :refer [new-registry]]
-    [clojure.string :refer [blank?]])
+    [clojure.string :refer [blank?]]
+    [{{ns-name}}.web-server :as web-server])
   (:import 
     [java.util.concurrent TimeUnit]
     [com.codahale.metrics MetricFilter]))
@@ -18,10 +19,15 @@
                           :duration-unit TimeUnit/MILLISECONDS
                           :filter MetricFilter/ALL}))
 
+(defn- instrument
+  [reg web-server]
+  (jvm/instrument-jvm reg)
+  (web-server/instrument-routes web-server reg))
+
 (defn- init-reporter
-  [this]
+  [{web-server :web-server :as this}]
   (let [reg (new-registry)]
-    (instrument-jvm reg)
+    (instrument reg web-server)
     (let [reporter (generate-reporter reg this)]
       (graphite/start reporter 10)
       reporter)))
@@ -44,7 +50,7 @@
   (graphite/stop gr)
   this)
 
-(defrecord Metrics [host port prefix]
+(defrecord Metrics [web-server]
   component/Lifecycle
   (start [this]
     (start this))

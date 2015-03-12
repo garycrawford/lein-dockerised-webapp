@@ -4,6 +4,7 @@
     [ring.adapter.jetty :as jetty]
     [ring.middleware.json :as json-response]
     [scenic.routes :as scenic]
+    [metrics.ring.instrument :as ring]
     [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
     [ring.util.response :as util]))
 
@@ -19,11 +20,16 @@
 
 (def routes (scenic/load-routes-from-file "routes.txt"))
 
+(defn instrument-routes
+  [{handler :handler} reg]
+  (ring/instrument handler reg))
+
 (defrecord WebServer []
   component/Lifecycle          
   (start [this]                
     (let [handler (create-handler routes routes-map)]
-      (assoc this :server (jetty/run-jetty handler {:port 1234 :join? false}))))
+      (assoc this :server (jetty/run-jetty handler {:port 1234 :join? false})
+                  :handler handler)))
   (stop [this]
     (.stop (:server this))     
     (dissoc this :server)))    
