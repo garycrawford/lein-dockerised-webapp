@@ -1,9 +1,8 @@
 (ns {{ns-name}}.system
-  (:require
-    [com.stuartsierra.component :as component]
-    [{{ns-name}}.web-server :refer [new-web-server]]
-    [{{ns-name}}.graphite-reporter :refer [new-graphite-reporter]]
-    [metrics.core :refer [new-registry]]))
+  (:require [com.stuartsierra.component :as component]
+            [metrics.core :refer [new-registry]]
+            [{{ns-name}}.graphite-reporter :refer [new-graphite-reporter]]
+            [{{ns-name}}.web-server :refer [new-web-server]]))
 
 (def components [:web-server :metrics-registry :graphite-reporter])
 

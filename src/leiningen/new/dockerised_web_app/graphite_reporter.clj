@@ -1,14 +1,11 @@
 (ns {{ns-name}}.graphite-reporter
-  (:require
-    [com.stuartsierra.component :as component]
-    [metrics.jvm.core :as jvm]
-    [metrics.reporters.graphite :as graphite]
-    [metrics.core :refer [new-registry]]
-    [clojure.string :refer [blank?]]
-    [environ.core :refer [env]])
-  (:import
-    [java.util.concurrent TimeUnit]
-    [com.codahale.metrics MetricFilter]))
+  (:require [clojure.string :refer [blank?]]
+            [com.stuartsierra.component :as component]
+            [environ.core :refer [env]]
+            [metrics.jvm.core :as jvm]
+            [metrics.reporters.graphite :as graphite])
+  (:import (com.codahale.metrics MetricFilter)
+           (java.util.concurrent TimeUnit)))
 
 (defn- generate-reporter
   [reg {:keys [host port prefix]}]

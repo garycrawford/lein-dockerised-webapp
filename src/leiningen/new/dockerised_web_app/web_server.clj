@@ -1,13 +1,13 @@
 (ns {{ns-name}}.web-server
-  (:require
-    [com.stuartsierra.component :as component]
-    [ring.adapter.jetty :as jetty]
-    [ring.middleware.json :as json-response]
-    [scenic.routes :as scenic]
-    [metrics.ring.instrument :as ring]
-    [metrics.ring.expose :as ring-expose]
-    [ring.middleware.defaults :refer [wrap-defaults api-defaults]]
-    [ring.util.response :as util]))
+  (:require [com.stuartsierra.component :as component]
+            [metrics.ring.instrument :as ring]
+            [ring.adapter.jetty :as jetty]
+            [ring.middleware.defaults :refer [api-defaults
+                                              wrap-defaults]]
+            [ring.middleware.json :as json-response]
+            [ring.util.response :as util]
+            [scenic.routes :as scenic]
+            [taoensso.timbre :refer [info]]))
 
 (defn create-handler
   [metrics-registry routes routes-map]
