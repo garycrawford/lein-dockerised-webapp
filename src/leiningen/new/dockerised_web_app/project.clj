@@ -8,6 +8,7 @@
                  [ring/ring-json "0.3.1"]        
                  [ring/ring-defaults "0.1.4"] 
                  [scenic "0.2.3"]
+                 [reloaded.repl "0.1.0"]
                  [com.stuartsierra/component "0.2.3"]
                  [metrics-clojure "2.4.0"]
                  [metrics-clojure-jvm "2.4.0"]
