@@ -25,10 +25,12 @@
 (defrecord WebServer [metrics-registry]
   component/Lifecycle
   (start [this]
+    (info "starting web-server")
     (let [handler (create-handler metrics-registry routes routes-map)]
       (assoc this :server (jetty/run-jetty handler {:port 1234 :join? false})
                   :handler handler)))
   (stop [this]
+    (info "stoping web-server")
     (.stop (:server this))
     (dissoc this :server)))
 
