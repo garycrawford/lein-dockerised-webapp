@@ -39,7 +39,8 @@
 
 (defn- stop
   [{:keys [gr] :as this}]
-  (graphite/stop gr)
+  (when gr 
+    (graphite/stop gr))
   this)
 
 (defrecord GraphiteReporter [metrics-registry]
