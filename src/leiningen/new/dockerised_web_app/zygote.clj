@@ -1,6 +1,6 @@
 (ns {{ns-name}}.zygote
-  (:require 
-    [com.stuartsierra.component :as component] 
+  (:require
+    [com.stuartsierra.component :as component]
     [{{ns-name}}.system :as system])
   (:gen-class))
 

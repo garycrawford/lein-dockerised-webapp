@@ -5,4 +5,4 @@
     [reloaded.repl :refer [system init start stop go reset]]
     [{{ns-name}}.system :refer [new-{{ns-name}}-system]]))
 
-(reloaded.repl/set-init! #(new-{{ns-name}}-system)) 
+(reloaded.repl/set-init! new-{{ns-name}}-system)
