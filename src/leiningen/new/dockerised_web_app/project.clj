@@ -25,13 +25,15 @@
                              [jonase/eastwood "0.2.1"]
                              [lein-bikeshed "0.2.0"]
                              [lein-kibit "0.0.8"]]
-                   :dependencies [[org.clojure/tools.namespace "0.2.10"]]}
+                   :dependencies [[org.clojure/tools.namespace "0.2.10"]
+                                  [slamhound "1.5.5"]]}
              :uberjar {:aot :all             
                        :main {{ns-name}}.zygote}}
-  :aliases { "omni" ["do"
-                     ["clean"]
-                     ["with-profile" "production" "deps" ":tree"]
-                     ["ancient"]
-                     ["kibit"]
-                     ["bikeshed"]
-                     ["eastwood"]]})
+  :aliases {"omni" ["do"
+                    ["clean"]
+                    ["with-profile" "production" "deps" ":tree"]
+                    ["ancient"]
+                    ["kibit"]
+                    ["bikeshed"]
+                    ["eastwood"]]
+            "slamhound" ["run" "-m" "slam.hound"]})
