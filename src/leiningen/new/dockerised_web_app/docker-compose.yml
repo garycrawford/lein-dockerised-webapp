@@ -1,4 +1,4 @@
-{{ns-name}}:
+{{docker-name}}:
   build: .
   ports:
    - "1234:1234"
@@ -7,13 +7,16 @@
    - .:/usr/src/app
   links:
    - metrics
+  hostname: "{{dockerized-svr}}"
   environment:
      GRAPHITE_HOST: 192.168.59.103
      GRAPHITE_PORT: 2003
-     GRAPHITE_PREFIX: quotations.
+     APP_NAME: {{ns-name}}
   command: lein repl :headless :host 0.0.0.0 :port 21212
 metrics:
   image: kamon/grafana_graphite:latest
+  volumes:
+   - ./dashboards:/src/dashboards
   ports:
    - "80:80"
    - "2003:2003"

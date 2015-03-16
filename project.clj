@@ -4,5 +4,6 @@
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :eval-in-leiningen true
+  :dependencies [[camel-snake-kebab "0.3.1" :exclusions [org.clojure/clojure]]]
   :scm {:name "git"
         :url "https://github.com/garycrawford/lein-dockerised-webapp"})

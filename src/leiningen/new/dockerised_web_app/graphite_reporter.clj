@@ -39,8 +39,7 @@
 
 (defn- stop
   [{:keys [gr] :as this}]
-  (when gr 
-    (graphite/stop gr))
+  (when gr (graphite/stop gr))
   this)
 
 (defrecord GraphiteReporter [metrics-registry]
@@ -53,4 +52,6 @@
 (defn new-graphite-reporter []
   (map->GraphiteReporter {:host   (env :graphite-host)
                           :port   (convert-port (env :graphite-port))
-                          :prefix (env :graphite-prefix)}))
+                          :prefix (format "stats.timers.%1s.%2s"
+                                          (env :app-name)
+                                          (env :hostname))}))

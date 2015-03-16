@@ -15,7 +15,7 @@
                  [metrics-clojure-graphite "2.4.0"]
                  [metrics-clojure-ring "2.4.0"]
                  [environ "1.0.0"]
-                 [com.taoensso/timbre "3.4.0"]]
+                 [com.taoensso/timbre "3.4.0" :exclusions [org.clojure/tools.reader]]]
 
   :repl-options {:init-ns user
                  :welcome (println "Type (dev) to start")}
