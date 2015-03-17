@@ -21,6 +21,7 @@
                   ["src/{{sanitized}}/web_server.clj" (render "web_server.clj" data)]
                   ["src/{{sanitized}}/system.clj" (render "system.clj" data)]
                   ["src/{{sanitized}}/graphite_reporter.clj" (render "graphite_reporter.clj" data)]
+                  ["src/{{sanitized}}/logging.clj" (render "logging.clj" data)]
                   ["dashboards/dashboard-loader.js" (render "dashboard-loader.js" data)]
                   ["dashboards/app-stats.json" (render "app-stats.json" data)]
                   ["config/dev.env" (render "dev.env" data)]

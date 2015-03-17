@@ -15,7 +15,8 @@
                  [metrics-clojure-graphite "2.4.0"]
                  [metrics-clojure-ring "2.4.0"]
                  [environ "1.0.0"]
-                 [com.taoensso/timbre "3.4.0" :exclusions [org.clojure/tools.reader]]]
+                 [com.taoensso/timbre "3.4.0" :exclusions [org.clojure/tools.reader]]
+                 [prone "0.8.1"]]
 
   :repl-options {:init-ns user
                  :welcome (println "Type (dev) to start")}
@@ -26,7 +27,8 @@
                              [lein-bikeshed "0.2.0"]
                              [lein-kibit "0.0.8"]]
                    :dependencies [[org.clojure/tools.namespace "0.2.10"]
-                                  [slamhound "1.5.5"]]}
+                                  [slamhound "1.5.5"]]
+                   :ring {:stacktrace-middleware prone.middleware/wrap-exceptions}}
              :uberjar {:aot :all             
                        :main {{ns-name}}.zygote}}
   :aliases {"omni" ["do"
