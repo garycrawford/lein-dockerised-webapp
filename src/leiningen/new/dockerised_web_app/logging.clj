@@ -12,6 +12,6 @@
            (binding [*out* (if error?
                              (OutputStreamWriter. System/err)
                              (OutputStreamWriter. System/out))]
-             (str-println (str "hehehe: " output))))}}})
+             (str-println output)))}}})
 
 (merge-config! info-timbre-config)

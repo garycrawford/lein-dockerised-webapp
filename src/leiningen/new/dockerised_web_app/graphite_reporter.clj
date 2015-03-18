@@ -2,7 +2,6 @@
   (:require [clojure.string :refer [blank?]]
             [com.stuartsierra.component :as component]
             [environ.core :refer [env]]
-            [metrics.jvm.core :as jvm]
             [metrics.reporters.graphite :as graphite])
   (:import (com.codahale.metrics MetricFilter)
            (java.util.concurrent TimeUnit)))
@@ -18,8 +17,6 @@
 
 (defn- init-reporter
   [{reg :metrics-registry :as this}]
-  ;; TODO instrumenting the JVM needs to live somewhere else
-  (jvm/instrument-jvm reg)
   (let [reporter (generate-reporter reg this)]
     (graphite/start reporter 10)
     reporter))

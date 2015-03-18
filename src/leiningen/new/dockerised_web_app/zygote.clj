@@ -5,9 +5,7 @@
 
 (def {{ns-name}}-system (system/new-{{ns-name}}-system))
 
-(defn app-init
-  []
+(defn -main
+  "The entry point for the application."
+  [& args]
   (alter-var-root #'{{ns-name}}-system component/start))
-
-(defn -main [& args]
-  (app-init))
