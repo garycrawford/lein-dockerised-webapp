@@ -5,8 +5,8 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :dependencies [[org.clojure/clojure "1.6.0"]
                  [ring/ring-jetty-adapter "1.3.2"]
-                 [ring/ring-json "0.3.1"]        
-                 [ring/ring-defaults "0.1.4"] 
+                 [ring/ring-json "0.3.1"]
+                 [ring/ring-defaults "0.1.4"]
                  [scenic "0.2.3" :exclusions [org.clojure/tools.reader]]
                  [reloaded.repl "0.1.0"]
                  [com.stuartsierra/component "0.2.3"]
@@ -16,7 +16,7 @@
                  [metrics-clojure-ring "2.4.0"]
                  [environ "1.0.0"]
                  [com.taoensso/timbre "3.4.0" :exclusions [org.clojure/tools.reader]]
-                 [prone "0.8.1"]]
+                 [prismatic/schema "0.4.0"]]
 
   :repl-options {:init-ns user
                  :welcome (println "Type (dev) to start")}
@@ -27,7 +27,9 @@
                              [lein-bikeshed "0.2.0"]
                              [lein-kibit "0.0.8"]]
                    :dependencies [[org.clojure/tools.namespace "0.2.10"]
-                                  [slamhound "1.5.5"]]
+                                  [slamhound "1.5.5"]
+                                  [com.cemerick/pomegranate "0.3.0" :exclusions [org.codehaus.plexus/plexus-utils]]
+                                  [prone "0.8.1"]]
                    :ring {:stacktrace-middleware prone.middleware/wrap-exceptions}}
              :uberjar {:aot :all             
                        :main {{ns-name}}.zygote}}
