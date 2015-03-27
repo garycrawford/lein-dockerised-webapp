@@ -16,7 +16,8 @@
                  [metrics-clojure-ring "2.4.0"]
                  [environ "1.0.0"]
                  [com.taoensso/timbre "3.4.0" :exclusions [org.clojure/tools.reader]]
-                 [prismatic/schema "0.4.0"]]
+                 [prismatic/schema "0.4.0"]
+                 [robert/hooke "1.3.0"]]
 
   :profiles {:uberjar {:aot :all             
                        :main {{ns-name}}.zygote}}

@@ -4,7 +4,9 @@
             [metrics.reporters.graphite :as graphite]
             [schema.core :as s]
             [schema.utils :as u]
-            [schema.coerce :as c])
+            [schema.coerce :as c]
+            [taoensso.timbre :refer [info]]
+            [robert.hooke :refer  [prepend append]])
   (:import (com.codahale.metrics MetricFilter)
            (java.util.concurrent TimeUnit)))
 
@@ -48,12 +50,17 @@
   (when-let [config (graphite-reporter-config)]
     (graphite/reporter metrics-registry config)))
 
+(defn start-reporter
+  [this]
+  (let [reporter (generate-reporter this)]
+    (graphite/start reporter 10)
+    (assoc this :graphite-reporter reporter)))
+
 (defn start
   [{:keys [graphite-reporter] :as this}]
-  (when-let [reporter (or graphite-reporter
-                          (generate-reporter this))]
-      (graphite/start reporter 10)
-      (assoc this :graphite-reporter reporter)))
+  (if graphite-reporter
+    graphite-reporter
+    (start-reporter this)))
 
 (defn stop
   [{:keys [graphite-reporter] :as this}]
@@ -69,3 +76,8 @@
 
 (defn new-graphite-reporter []
   (map->GraphiteReporter {}))
+
+(prepend start  (info :metrics-reporter :starting))
+(append  start  (info :metrics-reporter :started))
+(prepend stop   (info :metrics-reporter :stoping))
+(append  stop   (info :metrics-reporter :stopped))

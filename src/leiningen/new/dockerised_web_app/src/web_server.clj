@@ -7,7 +7,8 @@
             [ring.middleware.json :as json-response]
             [ring.util.response :as util]
             [scenic.routes :as scenic]
-            [taoensso.timbre :refer [info]]))
+            [taoensso.timbre :refer [info]]
+            [robert.hooke :refer  [prepend append]]))
 
 (def routes-map
   {:home (fn [req] (util/response {:msg "home place holder"}))
@@ -28,22 +29,17 @@
   [{:keys [metrics-registry server] :as this}]
   (if server
       this
-      (do (info "web-server: starting")
-          (let [handler (create-handler metrics-registry)
-                server  (jetty/run-jetty handler jetty-config)]
-            (info "web-server: started")
-            (assoc this :server server)))))
+      (let [handler (create-handler metrics-registry)
+            server  (jetty/run-jetty handler jetty-config)]
+        (assoc this :server server))))
 
 (defn stop
   [{:keys [server] :as this}]
   (if server
-      (do (info "web-server: stoping")
-          (.stop server)
+      (do (.stop server)
           (.join server)
-          (info "web-server: stopped")
           (dissoc this :server))
       this))
-
 
 (defrecord WebServer [metrics-registry]
   component/Lifecycle
@@ -54,3 +50,8 @@
 
 (defn new-web-server []
   (map->WebServer {}))
+
+(prepend start  (info :web-server :starting))
+(append  start  (info :web-server :started))
+(prepend stop   (info :web-server :stoping))
+(append  stop   (info :web-server :stopped))
