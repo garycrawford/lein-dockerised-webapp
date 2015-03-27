@@ -1,4 +1,4 @@
-FROM garycrawford/busybox-clojure
+FROM pointslope/clojure:lein-2.5.0
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app

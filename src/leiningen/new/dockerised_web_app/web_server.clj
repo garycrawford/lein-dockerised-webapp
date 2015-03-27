@@ -9,30 +9,48 @@
             [scenic.routes :as scenic]
             [taoensso.timbre :refer [info]]))
 
-(defn create-handler
-  [metrics-registry routes routes-map]
-  (-> (scenic/scenic-handler routes routes-map)
-      (json-response/wrap-json-response)
-      (wrap-defaults api-defaults)
-      (ring/instrument metrics-registry)))
-
 (def routes-map
   {:home (fn [req] (util/response {:msg "home place holder"}))
    :healthcheck (fn [req] (util/response {:msg "healthcheck place holder"}))})
 
 (def routes (scenic/load-routes-from-file "routes.txt"))
 
+(def jetty-config {:port 1234 :join? false})
+
+(defn create-handler
+  [metrics-registry]
+  (-> (scenic/scenic-handler routes routes-map)
+      (json-response/wrap-json-response)
+      (wrap-defaults api-defaults)
+      (ring/instrument metrics-registry)))
+
+(defn start
+  [{:keys [metrics-registry server] :as this}]
+  (if server
+      this
+      (do (info "web-server: starting")
+          (let [handler (create-handler metrics-registry)
+                server  (jetty/run-jetty handler jetty-config)]
+            (info "web-server: started")
+            (assoc this :server server)))))
+
+(defn stop
+  [{:keys [server] :as this}]
+  (if server
+      (do (info "web-server: stoping")
+          (.stop server)
+          (.join server)
+          (info "web-server: stopped")
+          (dissoc this :server))
+      this))
+
+
 (defrecord WebServer [metrics-registry]
   component/Lifecycle
   (start [this]
-    (info "starting web-server")
-    (let [handler (create-handler metrics-registry routes routes-map)]
-      (assoc this :server (jetty/run-jetty handler {:port 1234 :join? false})
-                  :handler handler)))
+    (start this))
   (stop [this]
-    (info "stoping web-server")
-    (.stop (:server this))
-    (dissoc this :server)))
+    (stop this)))
 
 (defn new-web-server []
   (map->WebServer {}))

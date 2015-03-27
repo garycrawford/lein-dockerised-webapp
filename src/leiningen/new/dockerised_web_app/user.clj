@@ -1,15 +1,24 @@
-(ns user)
+(ns user
+  "Tools for interactive development with the REPL. This file should
+  not be included in a production build of the application."
+  (:require
+    [clojure.tools.namespace.repl :refer [refresh]]
+    [midje.repl :refer [autotest]]
+    [reloaded.repl :refer [system init start stop go reset]]
+    [cemerick.pomegranate :refer [add-dependencies]]
+    [{{ns-name}}.system :refer [new-{{ns-name}}-system]]))
 
-;; This is an old trick from Pedestal. When system.clj doesn't compile,
-;; it can prevent the REPL from starting, which makes debugging very
-;; difficult. This extra step ensures the REPL starts, no matter what.
+(reloaded.repl/set-init! new-{{ns-name}}-system)
 
-(defn dev
+(autotest)
+
+(defn fix-exception
   []
-  (require 'dev)
-  (in-ns 'dev))
+  (require 'user :reload-all))
 
-
-(defn go
-  []
-  (println "Don't you mean (dev) ?"))
+(defn add-dependency
+  "Allows dynamic adding of dependencies to the classpath."
+  [dependency version]
+  (add-dependencies :coordinates  [[dependency version]]
+                    :repositories {"clojars" "http://clojars.org/repo"
+                                   "central" "http://repo1.maven.org/maven2/"}))

@@ -1,42 +1,63 @@
 (ns {{ns-name}}.graphite-reporter
-  (:require [clojure.string :refer [blank?]]
-            [com.stuartsierra.component :as component]
+  (:require [com.stuartsierra.component :as component]
             [environ.core :refer [env]]
-            [metrics.reporters.graphite :as graphite])
+            [metrics.reporters.graphite :as graphite]
+            [schema.core :as s]
+            [schema.utils :as u]
+            [schema.coerce :as c])
   (:import (com.codahale.metrics MetricFilter)
            (java.util.concurrent TimeUnit)))
 
-(defn- generate-reporter
-  [reg {:keys [host port prefix]}]
-  (graphite/reporter reg {:host host
-                          :port port
-                          :prefix prefix
-                          :rate-unit TimeUnit/SECONDS
-                          :duration-unit TimeUnit/MILLISECONDS
-                          :filter MetricFilter/ALL}))
+(defn create-prefix
+  [{:keys [app-name hostname]}]
+  (format "stats.timers.%1s.%2s" app-name hostname))
 
-(defn- init-reporter
-  [{reg :metrics-registry :as this}]
-  (let [reporter (generate-reporter reg this)]
-    (graphite/start reporter 10)
-    reporter))
+(def base-config {:rate-unit     TimeUnit/SECONDS
+                  :duration-unit TimeUnit/MILLISECONDS
+                  :filter        MetricFilter/ALL})
 
-(defn- convert-port
-  [port]
-  (when-not (blank? port)
-    (java.lang.Integer/parseInt port)))
+(def app-name-regex #"[a-zA-Z0-9\-]+")
+(def hostname-regex #"[a-zA-Z0-9]")
 
-(defn- start
-  [{:keys [gr port host prefix] :as this}]
-  (if-not (or (nil? port) (blank? host) (blank? prefix))
-    (if gr
-      (do (graphite/start gr 10) this)
-      (->> this init-reporter (assoc this :gr)))
-    this))
+(def GraphiteReporterEnvVars {(s/required-key :host)     s/Str
+                              (s/required-key :port)     s/Int
+                              (s/required-key :app-name) #"[a-zA-Z0-9]+"
+                              (s/required-key :hostname) #"[a-zA-Z0-9]+"})
 
-(defn- stop
-  [{:keys [gr] :as this}]
-  (when gr (graphite/stop gr))
+(def parse-env-vars (c/coercer GraphiteReporterEnvVars
+                               c/string-coercion-matcher))
+
+(defn graphite-reporter-env-vars
+  []
+  (parse-env-vars {:host     (env :graphite-host)
+                   :port     (env :graphite-port)
+                   :app-name (env :app-name)
+                   :hostname (env :hostname)}))
+
+(defn graphite-reporter-config
+  []
+  (let [env-vars (graphite-reporter-env-vars)]
+    (when-not (u/error? env-vars)
+      (-> env-vars
+          (select-keys [:host :port])
+          (assoc :prefix (create-prefix env-vars))
+          (merge base-config)))))
+
+(defn generate-reporter
+  [{:keys [metrics-registry]}]
+  (when-let [config (graphite-reporter-config)]
+    (graphite/reporter metrics-registry config)))
+
+(defn start
+  [{:keys [graphite-reporter] :as this}]
+  (when-let [reporter (or graphite-reporter
+                          (generate-reporter this))]
+      (graphite/start reporter 10)
+      (assoc this :graphite-reporter reporter)))
+
+(defn stop
+  [{:keys [graphite-reporter] :as this}]
+  (when graphite-reporter (graphite/stop graphite-reporter))
   this)
 
 (defrecord GraphiteReporter [metrics-registry]
@@ -47,8 +68,4 @@
     (stop this)))
 
 (defn new-graphite-reporter []
-  (map->GraphiteReporter {:host   (env :graphite-host)
-                          :port   (convert-port (env :graphite-port))
-                          :prefix (format "stats.timers.%1s.%2s"
-                                          (env :app-name)
-                                          (env :hostname))}))
+  (map->GraphiteReporter {}))
