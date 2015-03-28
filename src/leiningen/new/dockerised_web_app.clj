@@ -5,7 +5,9 @@
 (def render (renderer "dockerised-web-app"))
 
 (defn usage  []
-    (println "Usage: lein new stevedore <project-name> <web | api> [ <arg>... ]"))
+  (println)
+  (println "Usage: lein new stevedore <project-name> (site | api) [ <arg>... ]")
+  (println))
 
 (defn src-files
   [data] 
@@ -42,7 +44,7 @@
     [".gitignore" (render "gitignore" data)]
     ["README.md" (render "README.md" data)]])
 
-(defn all-files
+(defn site-files
   [data]
   (concat (src-files data)
           (test-files data)
@@ -51,7 +53,7 @@
           (dev-files data)
           (project-files data)))
 
-(defn tamplate-data
+(defn template-data
   [name]
   {:name name
    :ns-name (sanitize-ns name)
@@ -60,12 +62,29 @@
    :dockerized-svr (str (->PascalCase (sanitize-ns name)) "DevSvr")
    :year (str (.get (java.util.Calendar/getInstance) java.util.Calendar/YEAR))})
 
+(defn create-project
+  [name files-fn]
+  (let [data (template-data name)
+        files (files-fn data)]
+     (apply ->files data files)))
+
+(defn unknown-template-feedback
+  [template]
+  (println)
+  (println
+    (format "sorry, I don't recognise '%s' as a template option. Try 'site' or 'api'"
+            template))
+  (usage))
+
+(defn new-project
+  [name template args]
+  (cond
+    (= template "site") (println "creating site")
+    (= template "api")  (create-project name site-files)
+    :else (unknown-template-feedback template)))
+
 (defn dockerised-web-app
   ([name]
    (usage))
   ([name template & args]
-   (println template)
-   (println args)
-   (let [data (tamplate-data name) 
-         files (all-files data)]
-     (apply ->files data files))))
+   (new-project name template args)))
