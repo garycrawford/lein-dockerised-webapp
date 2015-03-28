@@ -16,6 +16,8 @@
   []
   (require 'user :reload-all))
 
+;; TODO: switch out for alembic as it allows reloading of project file
+
 (defn add-dependency
   "Allows dynamic adding of dependencies to the classpath."
   [dependency version]

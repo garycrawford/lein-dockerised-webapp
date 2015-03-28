@@ -17,7 +17,8 @@
                  [environ "1.0.0"]
                  [com.taoensso/timbre "3.4.0" :exclusions [org.clojure/tools.reader]]
                  [prismatic/schema "0.4.0"]
-                 [robert/hooke "1.3.0"]]
+                 [robert/hooke "1.3.0"]
+                 [de.ubercode.clostache/clostache "1.4.0"]]
 
   :profiles {:uberjar {:aot :all             
                        :main {{ns-name}}.zygote}}
