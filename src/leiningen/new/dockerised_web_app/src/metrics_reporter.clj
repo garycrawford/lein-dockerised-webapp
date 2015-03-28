@@ -1,4 +1,4 @@
-(ns {{ns-name}}.graphite-reporter
+(ns {{ns-name}}.metrics-reporter
   (:require [com.stuartsierra.component :as component]
             [environ.core :refer [env]]
             [metrics.reporters.graphite :as graphite]
@@ -29,16 +29,16 @@
 (def parse-env-vars (c/coercer GraphiteReporterEnvVars
                                c/string-coercion-matcher))
 
-(defn graphite-reporter-env-vars
+(defn metrics-reporter-env-vars
   []
-  (parse-env-vars {:host     (env :graphite-host)
-                   :port     (env :graphite-port)
+  (parse-env-vars {:host     (env :metrics-host)
+                   :port     (env :metrics-port)
                    :app-name (env :app-name)
                    :hostname (env :hostname)}))
 
-(defn graphite-reporter-config
+(defn metrics-reporter-config
   []
-  (let [env-vars (graphite-reporter-env-vars)]
+  (let [env-vars (metrics-reporter-env-vars)]
     (when-not (u/error? env-vars)
       (-> env-vars
           (select-keys [:host :port])
@@ -47,35 +47,35 @@
 
 (defn generate-reporter
   [{:keys [metrics-registry]}]
-  (when-let [config (graphite-reporter-config)]
+  (when-let [config (metrics-reporter-config)]
     (graphite/reporter metrics-registry config)))
 
 (defn start-reporter
   [this]
   (let [reporter (generate-reporter this)]
     (graphite/start reporter 10)
-    (assoc this :graphite-reporter reporter)))
+    (assoc this :metrics-reporter reporter)))
 
 (defn start
-  [{:keys [graphite-reporter] :as this}]
-  (if graphite-reporter
-    graphite-reporter
+  [{:keys [metrics-reporter] :as this}]
+  (if metrics-reporter
+    metrics-reporter
     (start-reporter this)))
 
 (defn stop
-  [{:keys [graphite-reporter] :as this}]
-  (when graphite-reporter (graphite/stop graphite-reporter))
+  [{:keys [metrics-reporter] :as this}]
+  (when metrics-reporter (graphite/stop metrics-reporter))
   this)
 
-(defrecord GraphiteReporter [metrics-registry]
+(defrecord MetricsReporter [metrics-registry]
   component/Lifecycle
   (start [this]
     (start this))
   (stop [this]
     (stop this)))
 
-(defn new-graphite-reporter []
-  (map->GraphiteReporter {}))
+(defn new-metrics-reporter []
+  (map->MetricsReporter {}))
 
 (prepend start  (info :metrics-reporter :starting))
 (append  start  (info :metrics-reporter :started))

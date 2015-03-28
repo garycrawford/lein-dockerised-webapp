@@ -1,6 +1,6 @@
-(ns {{ns-name}}.test.graphite-reporter
+(ns {{ns-name}}.test.metrics-reporter
   (:require [midje.sweet :refer :all]
-            [{{ns-name}}.graphite-reporter :refer :all]
+            [{{ns-name}}.metrics-reporter :refer :all]
             [clojure.test.check :as tc]
             [clojure.test.check.generators :as gen]
             [clojure.test.check.properties :as prop]
@@ -26,7 +26,7 @@
     (tc/quick-check 100 property)) => (contains {:result true}))
 
 (fact "a valid config will not generate an error"
-  (let [config (graphite-reporter-config)]
+  (let [config (metrics-reporter-config)]
     config => (contains
                 {:prefix "stats.timers.{{ns-name}}.{{dockerized-svr}}"
                  :port   2003

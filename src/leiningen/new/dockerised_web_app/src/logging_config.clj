@@ -1,4 +1,4 @@
-(ns {{ns-name}}.logging
+(ns {{ns-name}}.logging-config
   (:require [taoensso.timbre :refer [str-println merge-config!]])
   (:import [java.io OutputStreamWriter]))
 

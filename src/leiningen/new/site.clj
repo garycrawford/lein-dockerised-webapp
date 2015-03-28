@@ -24,12 +24,12 @@
   [["src/{{sanitized}}/zygote.clj" (render "src/zygote.clj" data)]
    ["src/{{sanitized}}/web_server.clj" (render "src/site_web_server.clj" data)]
    ["src/{{sanitized}}/system.clj" (render "src/system.clj" data)]
-   ["src/{{sanitized}}/graphite_reporter.clj" (render "src/graphite_reporter.clj" data)]
-   ["src/{{sanitized}}/logging.clj" (render "src/logging.clj" data)]])
+   ["src/{{sanitized}}/metrics_reporter.clj" (render "src/metrics_reporter.clj" data)]
+   ["src/{{sanitized}}/logging_config.clj" (render "src/logging_config.clj" data)]])
 
 (defn test-files
   [data]
-  [["test/{{sanitized}}/test/graphite_reporter.clj" (render "test/graphite_reporter.clj" data)]])
+  [["test/{{sanitized}}/test/metrics_reporter.clj" (render "test/metrics_reporter.clj" data)]])
 
 (defn dashboards-files
   [data]

@@ -9,8 +9,8 @@
    - metrics
   hostname: "{{dockerized-svr}}"
   environment:
-     GRAPHITE_HOST: 192.168.59.103
-     GRAPHITE_PORT: 2003
+     METRICS_HOST: 192.168.59.103
+     METRICS_PORT: 2003
      APP_NAME: {{ns-name}}
   command: lein repl :headless :host 0.0.0.0 :port 21212
 metrics:
