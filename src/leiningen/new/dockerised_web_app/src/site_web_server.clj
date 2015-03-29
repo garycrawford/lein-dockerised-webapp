@@ -9,11 +9,12 @@
             [scenic.routes :as scenic]
             [taoensso.timbre :refer [info]]
             [{{ns-name}}.controllers.home :as home]
+            [{{ns-name}}.controllers.healthcheck :as healthcheck]
             [robert.hooke :refer  [prepend append]]))
 
 (def routes-map
-  {:home (fn [_] (home/index))
-   :healthcheck (fn [req] (util/response {:msg "healthcheck place holder"}))})
+  {:home        (fn [_] (home/index))
+   :healthcheck (fn [_] (healthcheck/index))})
 
 (def routes (scenic/load-routes-from-file "routes.txt"))
 

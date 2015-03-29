@@ -5,19 +5,23 @@
 
 (defn controllers-files
   [data]
-  [["src/{{sanitized}}/controllers/home.clj" (render "src/controllers/home.clj" data)]])
+  [["src/{{sanitized}}/controllers/home.clj" (render "src/controllers/home_site.clj" data)]
+   ["src/{{sanitized}}/controllers/healthcheck.clj" (render "src/controllers/healthcheck.clj" data)]])
 
 (defn models-files
   [data]
-  [["src/{{sanitized}}/models/home.clj" (render "src/models/home.clj" data)]])
+  [["src/{{sanitized}}/models/home.clj" (render "src/models/home.clj" data)]
+   ["src/{{sanitized}}/models/healthcheck.clj" (render "src/models/healthcheck.clj" data)]])
 
 (defn views-files
   [data]
-  [["src/{{sanitized}}/views/home.clj" (render "src/views/home.clj" data)]])
+  [["src/{{sanitized}}/views/home.clj" (render "src/views/home.clj" data)]
+   ["src/{{sanitized}}/views/healthcheck.clj" (render "src/views/healthcheck.clj" data)]])
 
 (defn templates-files
   [data]
-  [["resources/templates/home/about.mustache" (render "resources/templates/home/about.mustache" data)]])
+  [["resources/templates/home/about.mustache" (render "resources/templates/home/about.mustache" data)]
+   ["resources/templates/healthcheck/healthcheck-list.mustache" (render "resources/templates/healthcheck/healthcheck-list.mustache" data)]])
 
 (defn src-files
   [data] 

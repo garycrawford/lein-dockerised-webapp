@@ -20,7 +20,11 @@
    :dockerized-svr (str (->PascalCase (sanitize-ns name)) "DevSvr")
    :year (str (.get (java.util.Calendar/getInstance) java.util.Calendar/YEAR))
    :person-template "{{person}}"
-   :location-template "{{location}}"})
+   :location-template "{{location}}"
+   :healthchecks-template-open "{{#healthchecks}}"
+   :healthchecks-template-close "{{/healthchecks}}"
+   :healthcheck-name-template "{{name}}"
+   :healthcheck-status-template "{{status}}"})
 
 (defn create-project
   [name files-fn]
