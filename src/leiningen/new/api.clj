@@ -15,12 +15,14 @@
 
 (defn views-files
   [data]
-  [["src/{{sanitized}}/views/home.clj" (render "src/views/home.clj" data)]
-   ["src/{{sanitized}}/views/healthcheck.clj" (render "src/views/healthcheck.clj" data)]])
+  [["src/{{sanitized}}/views/healthcheck.clj" (render "src/views/healthcheck.clj" data)]
+   ["src/{{sanitized}}/views/shared.clj" (render "src/views/shared.clj" data)]])
 
 (defn templates-files
   [data]
-  [["resources/templates/home/about.mustache" (render "resources/templates/home/about.mustache" data)]
+  [["resources/templates/shared/default.mustache" (render "resources/templates/shared/default.mustache" data)]
+   ["resources/templates/shared/header.mustache" (render "resources/templates/shared/header.mustache" data)]
+   ["resources/templates/shared/footer.mustache" (render "resources/templates/shared/footer.mustache" data)]
    ["resources/templates/healthcheck/healthcheck-list.mustache" (render "resources/templates/healthcheck/healthcheck-list.mustache" data)]])
 
 (defn src-files
@@ -30,6 +32,10 @@
    ["src/{{sanitized}}/system.clj" (render "src/system.clj" data)]
    ["src/{{sanitized}}/metrics_reporter.clj" (render "src/metrics_reporter.clj" data)]
    ["src/{{sanitized}}/logging_config.clj" (render "src/logging_config.clj" data)]])
+
+(defn public-files
+  [data]
+  [["resources/public/css/styles.css" (render "resources/public/css/styles.css" data)]])
 
 (defn test-files
   [data]
@@ -69,4 +75,5 @@
           (controllers-files data)
           (views-files data)
           (models-files data)
-          (templates-files data)))
+          (templates-files data)
+          (public-files data)))

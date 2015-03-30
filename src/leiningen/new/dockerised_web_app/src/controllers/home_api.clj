@@ -1,6 +1,5 @@
 (ns {{ns-name}}.controllers.home
-  (:require [{{ns-name}}.models.home :refer [about-model]]
-            [{{ns-name}}.views.home :refer [about-view]]))
+  (:require [{{ns-name}}.models.home :refer [about-model]]))
 
 (defn ok
   [body]
@@ -10,4 +9,4 @@
 
 (defn index
   []
-  (ok {:message "welcome to the api root"}))
+  (ok (about-model)))
