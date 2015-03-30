@@ -2,7 +2,7 @@
 
 (defn healthcheck-model
   [check-name check-status]
-  {:name   check-name 
+  {:name   check-name
    :status check-status})
 
 (defn healthcheck-list-model
