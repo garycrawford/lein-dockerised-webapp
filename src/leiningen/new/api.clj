@@ -26,7 +26,7 @@
 (defn src-files
   [data] 
   [["src/{{sanitized}}/zygote.clj" (render "src/zygote.clj" data)]
-   ["src/{{sanitized}}/web_server.clj" (render "src/api_web_server.clj" data)]
+   ["src/{{sanitized}}/web_server.clj" (render "src/web_server_api.clj" data)]
    ["src/{{sanitized}}/system.clj" (render "src/system.clj" data)]
    ["src/{{sanitized}}/metrics_reporter.clj" (render "src/metrics_reporter.clj" data)]
    ["src/{{sanitized}}/logging_config.clj" (render "src/logging_config.clj" data)]])

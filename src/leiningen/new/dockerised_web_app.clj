@@ -24,7 +24,11 @@
    :healthchecks-template-open "{{#healthchecks}}"
    :healthchecks-template-close "{{/healthchecks}}"
    :healthcheck-name-template "{{name}}"
-   :healthcheck-status-template "{{status}}"})
+   :healthcheck-status-template "{{status}}"
+   :title-template "{{title}}"
+   :content-template "{{{content}}}"
+   :header-template "{{>header}}"
+   :footer-template "{{>footer}}"})
 
 (defn create-project
   [name files-fn]
