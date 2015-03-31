@@ -1,6 +1,6 @@
 (ns {{ns-name}}.controllers.home
   (:require [{{ns-name}}.models.home :refer [about-model]]
-            [{{ns-name}}.views.home :refer [about-view]]))
+            [{{ns-name}}.views.home :refer [home-view]]))
 
 (defn ok
   [body]
@@ -10,6 +10,5 @@
 
 (defn index
   []
-  (let [model (about-model)
-        view (about-view model)]
-    (ok view)))
+  (ok {:model (about-model)
+       :view  (home-view "about")}))

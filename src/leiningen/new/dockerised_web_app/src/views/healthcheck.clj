@@ -4,7 +4,8 @@
 
 (def healthcheck-path (partial format "templates/healthcheck/%s.mustache"))
 
-(defn healthcheck-list-view
-  [model]
-  (let [content (render-resource (healthcheck-path "healthcheck-list") model)]
-    (wrap-with-layout "healthcheck" content)))
+(defn healthcheck-view
+  [template]
+  (let [path (healthcheck-path template)]
+    {:fn (fn [model] (render-resource path model))
+     :path path}))

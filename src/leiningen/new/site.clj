@@ -41,7 +41,9 @@
 
 (defn test-files
   [data]
-  [["test/{{sanitized}}/test/metrics_reporter.clj" (render "test/metrics_reporter.clj" data)]])
+  [["test/{{sanitized}}/test/metrics_reporter.clj" (render "test/metrics_reporter.clj" data)]
+   ["test/{{sanitized}}/test/controllers/home.clj" (render "test/controllers/home.clj" data)]
+   ["test/{{sanitized}}/test/controllers/healthcheck.clj" (render "test/controllers/healthcheck.clj" data)]])
 
 (defn dashboards-files
   [data]

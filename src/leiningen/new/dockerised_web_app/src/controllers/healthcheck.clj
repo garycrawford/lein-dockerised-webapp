@@ -1,6 +1,6 @@
 (ns {{ns-name}}.controllers.healthcheck
   (:require [{{ns-name}}.models.healthcheck :refer [healthcheck-list-model]]
-            [{{ns-name}}.views.healthcheck :refer [healthcheck-list-view]]))
+            [{{ns-name}}.views.healthcheck :refer [healthcheck-view]]))
 
 (defn ok
   [body]
@@ -10,6 +10,5 @@
 
 (defn index
   []
-  (let [model (healthcheck-list-model)
-        view (healthcheck-list-view model)]
-    (ok view)))
+  (ok {:model (healthcheck-list-model)
+       :view  (healthcheck-view "healthcheck-list")}))
