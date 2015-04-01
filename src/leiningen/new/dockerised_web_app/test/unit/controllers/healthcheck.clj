@@ -1,4 +1,4 @@
-(ns {{ns-name}}.test.controllers.healthcheck
+(ns {{ns-name}}.unit.controllers.healthcheck
   (:require [midje.sweet :refer :all]
             [{{ns-name}}.controllers.healthcheck :refer :all]))
 

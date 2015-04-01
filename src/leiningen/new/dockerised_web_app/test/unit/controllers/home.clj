@@ -1,4 +1,4 @@
-(ns {{ns-name}}.test.controllers.home
+(ns {{ns-name}}.unit.controllers.home
   (:require [midje.sweet :refer :all]
             [{{ns-name}}.controllers.home :refer :all]))
 

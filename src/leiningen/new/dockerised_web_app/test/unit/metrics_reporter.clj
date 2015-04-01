@@ -1,4 +1,4 @@
-(ns {{ns-name}}.test.metrics-reporter
+(ns {{ns-name}}.unit.metrics-reporter
   (:require [midje.sweet :refer :all]
             [{{ns-name}}.metrics-reporter :refer :all]
             [clojure.test.check :as tc]

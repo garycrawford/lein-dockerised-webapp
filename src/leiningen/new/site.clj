@@ -41,9 +41,10 @@
 
 (defn test-files
   [data]
-  [["test/{{sanitized}}/test/metrics_reporter.clj" (render "test/metrics_reporter.clj" data)]
-   ["test/{{sanitized}}/test/controllers/home.clj" (render "test/controllers/home.clj" data)]
-   ["test/{{sanitized}}/test/controllers/healthcheck.clj" (render "test/controllers/healthcheck.clj" data)]])
+  [["test/{{sanitized}}/unit/metrics_reporter.clj" (render "test/unit/metrics_reporter.clj" data)]
+   ["test/{{sanitized}}/unit/controllers/home.clj" (render "test/unit/controllers/home.clj" data)]
+   ["test/{{sanitized}}/unit/controllers/healthcheck.clj" (render "test/unit/controllers/healthcheck.clj" data)]
+   ["test/{{sanitized}}/integration/controllers/home.clj" (render "test/integration/controllers/home.clj" data)]])
 
 (defn dashboards-files
   [data]
@@ -66,6 +67,7 @@
     ["docker-compose.yml" (render "docker-compose.yml" data)]
     [".dockerignore" (render "dockerignore" data)]
     [".gitignore" (render "gitignore" data)]
+    [".midje.clj" (render "midje.clj" data)]
     ["README.md" (render "README.md" data)]])
 
 (defn site-files
