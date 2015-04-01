@@ -1,5 +1,5 @@
-(defproject dockerised-web-app/lein-template "0.1.1"
-  :description "Lein template for generating a dockerised Clojure web-app"
+(defproject dockerised-web-app/lein-template "0.1.2"
+  :description "Lein template for generating a dockerised Clojure sites and apis"
   :url "https://github.com/garycrawford/lein-dockerised-webapp"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
