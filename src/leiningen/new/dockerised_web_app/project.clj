@@ -18,7 +18,9 @@
                  [com.taoensso/timbre "3.4.0" :exclusions [org.clojure/tools.reader]]
                  [prismatic/schema "0.4.0"]
                  [robert/hooke "1.3.0"]
-                 [de.ubercode.clostache/clostache "1.4.0"]]
+                 [de.ubercode.clostache/clostache "1.4.0"]
+                 ;[com.novemberain/monger "2.0.1"]
+                 {{{mongodb-project-dep}}}]
 
   :profiles {:uberjar {:aot :all             
                        :main {{ns-name}}.zygote}}

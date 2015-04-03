@@ -5,6 +5,7 @@
             :url "http://www.eclipse.org/legal/epl-v10.html"}
   :eval-in-leiningen true
   :dependencies [[camel-snake-kebab "0.3.1" :exclusions [org.clojure/clojure]]
+                 [org.clojure/tools.cli "0.3.1"]
                  [midje "1.6.3"]
                  [org.clojure/test.check "0.7.0"]
                  [com.gfredericks/test.chuck "0.1.16"]

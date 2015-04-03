@@ -17,4 +17,5 @@
        :env {:metrics-host "192.168.59.103"
              :metrics-port 2003
              :app-name     "{{ns-name}}"
-             :hostname     "{{dockerized-svr}}"}}}
+             :hostname     "{{dockerized-svr}}"
+             :mongodb-uri  "mongodb://192.168.59.103/{{ns-name}}"}}}

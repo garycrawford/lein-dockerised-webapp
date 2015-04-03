@@ -3,6 +3,12 @@
 
 (def render (renderer "dockerised-web-app"))
 
+(defn component-files
+  [data {:keys [db]}]
+  (let [files [(when (= db :mongodb)
+                 ["src/{{sanitized}}/components/mongo_connection.clj" (render "src/components/mongo_connection.clj" data)])]]
+    (remove nil? files)))
+
 (defn controllers-files
   [data]
   [["src/{{sanitized}}/controllers/home.clj" (render "src/controllers/home_api.clj" data)]
@@ -67,7 +73,7 @@
     ["README.md" (render "README.md" data)]])
 
 (defn api-files
-  [data]
+  [data args]
   (concat (src-files data)
           (test-files data)
           (dashboards-files data)
@@ -78,4 +84,5 @@
           (views-files data)
           (models-files data)
           (templates-files data)
-          (public-files data)))
+          (public-files data)
+          (component-files data args)))

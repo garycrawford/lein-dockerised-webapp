@@ -7,10 +7,10 @@
    - .:/usr/src/app
   links:
    - metrics
-   {{mongodb-docker-compose-links}}
+   - persistence
   hostname: "{{dockerized-svr}}"
   environment:
-     {{mongodb-docker-compose-environment}}
+     MONGODB_URI: mongodb://192.168.59.103/{{ns-name}}
      METRICS_HOST: 192.168.59.103
      METRICS_PORT: 2003
      APP_NAME: {{ns-name}}
@@ -22,4 +22,7 @@ metrics:
   ports:
    - "80:80"
    - "2003:2003"
-{{{mongodb-docker-compose-section}}}
+persistence:
+   image: mongo:3.0.1
+   ports:
+   - "27017:27017"

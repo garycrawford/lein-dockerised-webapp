@@ -16,7 +16,7 @@ create_new () {
   	rm -rf "./$1"
   fi
 
-  lein new dockerised-web-app $1 $2
+  lein new dockerised-web-app $1 $2 --db mongodb
 }
 
 create_new example-site site
