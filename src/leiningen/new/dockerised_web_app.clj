@@ -10,10 +10,7 @@
 
 (defn mongodb
   [ns-name]
-  {:mongodb-system-require (format "[%1s.components.mongo-connection :refer [new-mongo-connection]]" ns-name)
-   :mongodb-system-components " :mongo-connection"
-   :mongodb-system-map ":mongo-connection (new-mongo-connection)"
-   :mongodb-project-dep "[com.novemberain/monger \"2.0.1\"]"
+  {:mongodb-project-dep "[com.novemberain/monger \"2.0.1\"]"
    :mongodb-docker-compose-links "- persistence"
    :mongodb-docker-compose-environment (format "MONGODB_URI: mongodb://192.168.59.103/%1s" ns-name)
    :mongodb-docker-compose-section (->> ["persistence:"
@@ -21,6 +18,53 @@
                                          "   ports:"
                                          "   - \"27017:27017\""]
                                         (string/join \newline))})
+
+(defn construct-template
+  [lines]
+  (->> lines
+       (partition 2)
+       (map (fn [[line check-fn]] (when (check-fn) line)))
+       (filter (complement nil?))
+       (string/join \newline)))
+
+(def always (constantly true))
+(def mongodb? (partial = :mongodb))
+
+(defn system-ns-str
+  [ns-name {:keys [db]}]
+  (let [template (-> ["(ns %1$s.system"                                                              always
+                      "  (:require [com.stuartsierra.component :as component]"                       always
+                      "            [metrics.core :refer [new-registry]]"                             always
+                      "            [metrics.jvm.core :as jvm]"                                       always
+                      "            [%1$s.metrics-reporter :refer [new-metrics-reporter]]"            always
+                      "            [%1$s.components.mongo-connection :refer [new-mongo-connection]]" #(mongodb? db)
+                      "            [%1$s.logging-config]"                                            always
+                      "            [%1$s.web-server :refer [new-web-server]]))"                      always]
+                     construct-template)]
+    (format template ns-name)))
+
+(defn system-comp-list-str
+  [{:keys [db]}]
+  (-> ["(def components [:web-server"         always
+       "                 :mongo-connection"   #(mongodb? db)
+       "                 :metrics-registry"   always
+       "                 :metrics-reporter])" always]
+      construct-template))
+
+(defn system-dep-graph
+  [ns-name {:keys [db]}]
+  (let [template (-> ["(defn new-%1s-system"                                                                 always
+                      "  \"Constructs the component system for the application.\""                           always
+                      "  []"                                                                                 always
+                      "  (let [metrics-registry (new-registry)]"                                             always
+                      "    (jvm/instrument-jvm metrics-registry)"                                            always
+                      "    (map->Quotations-Web-System"                                                      always
+                      "     {:web-server       (component/using (new-web-server) [:metrics-registry])"       always
+                      "      :mongo-connection (new-mongo-connection)"                                       #(mongodb? db)
+                      "      :metrics-reporter (component/using (new-metrics-reporter) [:metrics-registry])" always
+                      "      :metrics-registry  metrics-registry})))"                                        always]
+                     construct-template)]
+    (format template ns-name)))
 
 (defn template-data
   [name options]
@@ -40,7 +84,10 @@
             :title-template "{{title}}"
             :content-template "{{{content}}}"
             :header-template "{{>header}}"
-            :footer-template "{{>footer}}"}
+            :footer-template "{{>footer}}"
+            :system-ns (system-ns-str ns-name options)
+            :system-comp-list (system-comp-list-str options)
+            :system-dep-graph (system-dep-graph ns-name options)}
            (when (:db options) (mongodb ns-name)))))
 
 (defn create-project
