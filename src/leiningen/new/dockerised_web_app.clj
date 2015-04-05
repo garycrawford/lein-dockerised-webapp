@@ -135,6 +135,24 @@
                      construct-template)]
     (format template ns-name)))
 
+(defn healthcheck-list-template
+  []
+  (->> ["<ul>"
+        "{{#healthchecks}}"
+        "  <li>{{name}}: {{status}}</li>"
+        "{{/healthchecks}}"
+        "</ul>"]
+       (string/join \newline)))
+
+(defn page-template
+  []
+  (->> ["{{>header}}"
+        "  <div class=\"default\">"
+        "    {{{content}}}"
+        "  </div>"
+        "{{>footer}}"]
+       (string/join \newline)))
+
 (defn template-data
   [name options]
   (let [ns-name (sanitize-ns name)
@@ -146,14 +164,9 @@
      :year (str (.get (java.util.Calendar/getInstance) java.util.Calendar/YEAR))
      :person-template "{{person}}"
      :location-template "{{location}}"
-     :healthchecks-template-open "{{#healthchecks}}"
-     :healthchecks-template-close "{{/healthchecks}}"
-     :healthcheck-name-template "{{name}}"
-     :healthcheck-status-template "{{status}}"
+     :healthcheck-list-template (healthcheck-list-template)
      :title-template "{{title}}"
-     :content-template "{{{content}}}"
-     :header-template "{{>header}}"
-     :footer-template "{{>footer}}"
+     :page-template (page-template)
      :system-ns (system-ns-str ns-name options)
      :system-comp-list (system-comp-list-str options)
      :system-dep-graph (system-dep-graph ns-name options)
@@ -171,15 +184,9 @@
      (apply ->files data files)))
 
 (def cli-options
-  [;; First three strings describe a short-option, long-option with optional
-   ;; example argument description, and a description. All three are optional
-   ;; and positional.
-   ["-d" "--db DATABASE" "Database to be used. Currently only supports `mongodb`"
+  [["-d" "--db DATABASE" "Database to be used. Currently only supports `mongodb`"
     :parse-fn keyword
-;    :default :none
     :validate [#(= % :mongodb) "Currently only mongodb is currently supported"]]
-   ;; If no required argument description is given, the option is assumed to
-   ;; be a boolean option defaulting to nil
    ["-v" nil "Verbosity level; may be specified multiple times to increase value"
     ;; If no long-option is specified, an option :id must be given
     :id :verbosity
