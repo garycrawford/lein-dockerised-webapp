@@ -28,6 +28,6 @@
 (fact "a valid config will not generate an error"
   (let [config (metrics-reporter-config)]
     config => (contains
-                {:prefix "stats.timers.{{ns-name}}.{{dockerized-svr}}"
+                {:prefix "stats.timers.{{ns-name}}.{{dockerised-svr}}"
                  :port   2003
                  :host   "192.168.59.103"})))

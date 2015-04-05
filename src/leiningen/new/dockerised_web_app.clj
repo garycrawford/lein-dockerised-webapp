@@ -8,17 +8,6 @@
 
 (def render (renderer "dockerised-web-app"))
 
-(defn mongodb
-  [ns-name]
-  {:mongodb-project-dep "[com.novemberain/monger \"2.0.1\"]"
-   :mongodb-docker-compose-links "- persistence"
-   :mongodb-docker-compose-environment (format "MONGODB_URI: mongodb://192.168.59.103/%1s" ns-name)
-   :mongodb-docker-compose-section (->> ["persistence:"
-                                         "   image: mongo:3.0.1"
-                                         "   ports:"
-                                         "   - \"27017:27017\""]
-                                        (string/join \newline))})
-
 (defn construct-template
   [lines]
   (->> lines
@@ -29,6 +18,86 @@
 
 (def always (constantly true))
 (def mongodb? (partial = :mongodb))
+
+(defn dev-profile
+  [ns-name dockerised-svr {:keys [db]}]
+  (let [template (-> ["{:dev {:source-paths [\"dev\"]"                                                                            always
+                      "       :plugins [[lein-ancient \"0.6.3\"]"                                                                 always
+                      "                 [jonase/eastwood \"0.2.1\"]"                                                              always
+                      "                 [lein-bikeshed \"0.2.0\"]"                                                                always
+                      "                 [lein-kibit \"0.0.8\"]"                                                                   always
+                      "                 [lein-environ \"1.0.0\"]"                                                                 always
+                      "                 [lein-midje \"3.1.3\"]]"                                                                  always
+                      "       :dependencies [[org.clojure/tools.namespace \"0.2.10\"]"                                            always
+                      "                      [slamhound \"1.5.5\"]"                                                               always
+                      "                      [com.cemerick/pomegranate \"0.3.0\" :exclusions [org.codehaus.plexus/plexus-utils]]" always
+                      "                      [prone \"0.8.1\"]"                                                                   always
+                      "                      [midje \"1.6.3\"]"                                                                   always
+                      "                      [org.clojure/test.check \"0.7.0\"]"                                                  always
+                      "                      [com.gfredericks/test.chuck \"0.1.16\"]"                                             always
+                      "                      [kerodon \"0.5.0\"]]"                                                                always
+                      "       :env {:metrics-host \"192.168.59.103\""                                                             always
+                      "             :metrics-port 2003"                                                                           always
+                      "             :mongodb-uri  \"mongodb://192.168.59.103/%1$s\""                                              #(mongodb? db)
+                      "             :app-name     \"%1$s\""                                                                       always
+                      "             :hostname     \"%2$s\"}"                                                                      always
+                      "       :ring {:stacktrace-middleware prone.middleware/wrap-exceptions}}}"                                  always]
+                     construct-template)]
+    (format template ns-name dockerised-svr)))
+
+(defn docker-compose
+  [docker-name svr-name ns-name {:keys [db]}]
+  (let [template (-> ["%1s:"                                                     always
+                      "  build: ."                                               always
+                      "  ports:"                                                 always
+                      "   - \"1234:1234\""                                       always
+                      "   - \"21212:21212\""                                     always
+                      "  volumes:"                                               always
+                      "   - .:/usr/src/app"                                      always
+                      "  links:"                                                 always
+                      "   - metrics"                                             always
+                      "   - persistence"                                         #(mongodb? db)
+                      "  hostname: \"%2s\""                                      always
+                      "  environment:"                                           always
+                      "     MONGODB_URI: mongodb://192.168.59.103/%3$s"          #(mongodb? db)
+                      "     METRICS_HOST: 192.168.59.103"                        always
+                      "     METRICS_PORT: 2003"                                  always
+                      "     APP_NAME: %3$s"                                      always
+                      "  command: lein repl :headless :host 0.0.0.0 :port 21212" always
+                      "metrics:"                                                 always
+                      "  image: garycrawford/grafana_graphite:0.0.1"             always
+                      "  volumes:"                                               always
+                      "   - ./dashboards:/src/dashboards"                        always
+                      "  ports:"                                                 always
+                      "   - \"80:80\""                                           always
+                      "   - \"2003:2003\""                                       always
+                      "persistence:"                                             #(mongodb? db)
+                      "   image: mongo:3.0.1"                                    #(mongodb? db)
+                      "   ports:"                                                #(mongodb? db)
+                      "   - \"27017:27017\""                                     #(mongodb? db)]
+                     construct-template)]
+    (format template docker-name svr-name ns-name)))
+
+(defn project-deps
+  [{:keys [db]}]
+  (-> [" :dependencies [[org.clojure/clojure \"1.6.0\"]"                                        always
+       "                [ring/ring-jetty-adapter \"1.3.2\"]"                                    always
+       "                [ring/ring-json \"0.3.1\"]"                                             always
+       "                [ring/ring-defaults \"0.1.4\"]"                                         always
+       "                [scenic \"0.2.3\" :exclusions [org.clojure/tools.reader]]"              always
+       "                [reloaded.repl \"0.1.0\"]"                                              always
+       "                [com.stuartsierra/component \"0.2.3\"]"                                 always
+       "                [metrics-clojure \"2.5.0\"]"                                            always
+       "                [metrics-clojure-jvm \"2.5.0\"]"                                        always
+       "                [metrics-clojure-graphite \"2.5.0\"]"                                   always 
+       "                [metrics-clojure-ring \"2.5.0\"]"                                       always
+       "                [environ \"1.0.0\"]"                                                    always
+       "                [com.taoensso/timbre \"3.4.0\" :exclusions [org.clojure/tools.reader]]" always
+       "                [prismatic/schema \"0.4.0\"]"                                           always
+       "                [robert/hooke \"1.3.0\"]"                                               always
+       "                [com.novemberain/monger \"2.0.1\"]"                                     #(mongodb? db)
+       "                [de.ubercode.clostache/clostache \"1.4.0\"]]"                           always]
+      construct-template))
 
 (defn system-ns-str
   [ns-name {:keys [db]}]
@@ -68,27 +137,32 @@
 
 (defn template-data
   [name options]
-  (let [ns-name (sanitize-ns name)]
-    (merge {:name name
-            :ns-name ns-name
-            :sanitized (name-to-path name)
-            :docker-name (string/replace name #"-" "")
-            :dockerized-svr (str (->PascalCase (sanitize-ns name)) "DevSvr")
-            :year (str (.get (java.util.Calendar/getInstance) java.util.Calendar/YEAR))
-            :person-template "{{person}}"
-            :location-template "{{location}}"
-            :healthchecks-template-open "{{#healthchecks}}"
-            :healthchecks-template-close "{{/healthchecks}}"
-            :healthcheck-name-template "{{name}}"
-            :healthcheck-status-template "{{status}}"
-            :title-template "{{title}}"
-            :content-template "{{{content}}}"
-            :header-template "{{>header}}"
-            :footer-template "{{>footer}}"
-            :system-ns (system-ns-str ns-name options)
-            :system-comp-list (system-comp-list-str options)
-            :system-dep-graph (system-dep-graph ns-name options)}
-           (when (:db options) (mongodb ns-name)))))
+  (let [ns-name (sanitize-ns name)
+        docker-name (string/replace name #"-" "")
+        dockerised-svr (str (->PascalCase (sanitize-ns name)) "DevSvr")]
+    {:name name
+     :ns-name ns-name
+     :sanitized (name-to-path name)
+     :year (str (.get (java.util.Calendar/getInstance) java.util.Calendar/YEAR))
+     :person-template "{{person}}"
+     :location-template "{{location}}"
+     :healthchecks-template-open "{{#healthchecks}}"
+     :healthchecks-template-close "{{/healthchecks}}"
+     :healthcheck-name-template "{{name}}"
+     :healthcheck-status-template "{{status}}"
+     :title-template "{{title}}"
+     :content-template "{{{content}}}"
+     :header-template "{{>header}}"
+     :footer-template "{{>footer}}"
+     :system-ns (system-ns-str ns-name options)
+     :system-comp-list (system-comp-list-str options)
+     :system-dep-graph (system-dep-graph ns-name options)
+     :project-deps (project-deps options)
+     :dockerised-svr dockerised-svr
+     :docker-compose (docker-compose docker-name dockerised-svr ns-name options)
+     :dev-profile (dev-profile ns-name dockerised-svr options)}))
+
+(template-data "jimmy" {:db :mongodb})
 
 (defn create-project
   [name files-fn options]
@@ -104,13 +178,8 @@
     :parse-fn keyword
 ;    :default :none
     :validate [#(= % :mongodb) "Currently only mongodb is currently supported"]]
-   ["-H" "--hostname HOST" "Remote host"
-    ;; Specify a string to output in the default column in the options summary
-    ;; if the default value's string representation is very ugly
-    :default-desc "localhost"]
    ;; If no required argument description is given, the option is assumed to
    ;; be a boolean option defaulting to nil
-   [nil "--detach" "Detach from controlling process"]
    ["-v" nil "Verbosity level; may be specified multiple times to increase value"
     ;; If no long-option is specified, an option :id must be given
     :id :verbosity
