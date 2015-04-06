@@ -1,4 +1,4 @@
-(ns {{ns-name}}.web-server
+(ns {{ns-name}}.components.web-server
   (:require [com.stuartsierra.component :as component]
             [metrics.ring.instrument :as ring]
             [ring.adapter.jetty :as jetty]

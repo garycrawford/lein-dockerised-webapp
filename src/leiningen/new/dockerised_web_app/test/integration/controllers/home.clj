@@ -3,7 +3,7 @@
             [kerodon.core :refer [session visit]]
             [kerodon.test :refer [has status?]]
             [metrics.core :refer [new-registry]]
-            [{{ns-name}}.web-server :refer [create-handler]]))
+            [{{ns-name}}.components.web-server :refer [create-handler]]))
 
 (def app (create-handler (new-registry)))
 

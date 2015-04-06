@@ -6,7 +6,7 @@
     [midje.repl :refer [autotest]]
     [reloaded.repl :refer [system init start stop go reset]]
     [cemerick.pomegranate :refer [add-dependencies]]
-    [{{ns-name}}.system :refer [new-{{ns-name}}-system]]))
+    [{{ns-name}}.components.system :refer [new-{{ns-name}}-system]]))
 
 (reloaded.repl/set-init! new-{{ns-name}}-system)
 

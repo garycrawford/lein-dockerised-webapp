@@ -98,14 +98,14 @@
 
 (defn system-ns-str
   [ns-name {:keys [db]}]
-  (let [template (-> ["(ns %1$s.system"                                                              always
+  (let [template (-> ["(ns %1$s.components.system"                                                   always
                       "  (:require [com.stuartsierra.component :as component]"                       always
                       "            [metrics.core :refer [new-registry]]"                             always
                       "            [metrics.jvm.core :as jvm]"                                       always
-                      "            [%1$s.metrics-reporter :refer [new-metrics-reporter]]"            always
+                      "            [%1$s.components.metrics-reporter :refer [new-metrics-reporter]]" always
                       "            [%1$s.components.mongo-connection :refer [new-mongo-connection]]" #(mongodb? db)
                       "            [%1$s.logging-config]"                                            always
-                      "            [%1$s.web-server :refer [new-web-server]]))"                      always]
+                      "            [%1$s.components.web-server :refer [new-web-server]]))"           always]
                      construct-template)]
     (format template ns-name)))
 

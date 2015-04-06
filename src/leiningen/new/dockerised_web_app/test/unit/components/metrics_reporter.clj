@@ -1,6 +1,6 @@
-(ns {{ns-name}}.unit.metrics-reporter
+(ns {{ns-name}}.unit.components.metrics-reporter
   (:require [midje.sweet :refer :all]
-            [{{ns-name}}.metrics-reporter :refer :all]
+            [{{ns-name}}.components.metrics-reporter :refer :all]
             [clojure.test.check :as tc]
             [clojure.test.check.generators :as gen]
             [clojure.test.check.properties :as prop]

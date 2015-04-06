@@ -6,7 +6,10 @@
 (defn component-files
   [data {:keys [db]}]
   (let [files [(when (= db :mongodb)
-                 ["src/{{sanitized}}/components/mongo_connection.clj" (render "src/components/mongo_connection.clj" data)])]]
+                 ["src/{{sanitized}}/components/mongo_connection.clj" (render "src/components/mongo_connection.clj" data)])
+                 ["src/{{sanitized}}/components/web_server.clj" (render "src/components/web_server_site.clj" data)]
+                 ["src/{{sanitized}}/components/system.clj" (render "src/components/system.clj" data)]
+                 ["src/{{sanitized}}/components/metrics_reporter.clj" (render "src/components/metrics_reporter.clj" data)]]]
     (remove nil? files)))
 
 (defn controllers-files
@@ -36,9 +39,6 @@
 (defn src-files
   [data] 
   [["src/{{sanitized}}/zygote.clj" (render "src/zygote.clj" data)]
-   ["src/{{sanitized}}/web_server.clj" (render "src/web_server_site.clj" data)]
-   ["src/{{sanitized}}/system.clj" (render "src/system.clj" data)]
-   ["src/{{sanitized}}/metrics_reporter.clj" (render "src/metrics_reporter.clj" data)]
    ["src/{{sanitized}}/logging_config.clj" (render "src/logging_config.clj" data)]])
 
 (defn public-files
@@ -47,7 +47,7 @@
 
 (defn test-files
   [data]
-  [["test/{{sanitized}}/unit/metrics_reporter.clj" (render "test/unit/metrics_reporter.clj" data)]
+  [["test/{{sanitized}}/unit/components/metrics_reporter.clj" (render "test/unit/components/metrics_reporter.clj" data)]
    ["test/{{sanitized}}/unit/controllers/home.clj" (render "test/unit/controllers/home.clj" data)]
    ["test/{{sanitized}}/unit/controllers/healthcheck.clj" (render "test/unit/controllers/healthcheck.clj" data)]
    ["test/{{sanitized}}/integration/controllers/home.clj" (render "test/integration/controllers/home.clj" data)]])
