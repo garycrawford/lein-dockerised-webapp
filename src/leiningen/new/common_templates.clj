@@ -84,15 +84,15 @@
        "                [scenic \"0.2.3\" :exclusions [org.clojure/tools.reader]]"              always
        "                [reloaded.repl \"0.1.0\"]"                                              always
        "                [com.stuartsierra/component \"0.2.3\"]"                                 always
-       "                [metrics-clojure \"2.5.0\"]"                                            always
-       "                [metrics-clojure-jvm \"2.5.0\"]"                                        always
-       "                [metrics-clojure-graphite \"2.5.0\"]"                                   always 
-       "                [metrics-clojure-ring \"2.5.0\"]"                                       always
+       "                [metrics-clojure \"2.5.1\"]"                                            always
+       "                [metrics-clojure-jvm \"2.5.1\"]"                                        always
+       "                [metrics-clojure-graphite \"2.5.1\"]"                                   always 
+       "                [metrics-clojure-ring \"2.5.1\"]"                                       always
        "                [environ \"1.0.0\"]"                                                    always
        "                [com.taoensso/timbre \"3.4.0\" :exclusions [org.clojure/tools.reader]]" always
        "                [prismatic/schema \"0.4.0\"]"                                           always
        "                [robert/hooke \"1.3.0\"]"                                               always
-       "                [com.novemberain/monger \"2.0.1\"]"                                     #(mongodb? db)
+       "                [com.novemberain/monger \"2.1.0\"]"                                     #(mongodb? db)
        "                [de.ubercode.clostache/clostache \"1.4.0\"]]"                           always]
       construct-template))
 

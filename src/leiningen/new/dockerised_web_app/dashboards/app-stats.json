@@ -554,16 +554,16 @@
         "name": "Host",
         "options": [
           {
-            "text": "{{dockerized-svr}}",
-            "value": "{{dockerized-svr}}"
+            "text": "{{dockerised-svr}}",
+            "value": "{{dockerised-svr}}"
           }
         ],
         "includeAll": false,
         "allFormat": "glob",
         "query": "stats.timers.*.*",
         "current": {
-          "text": "{{dockerized-svr}}",
-          "value": "{{dockerized-svr}}"
+          "text": "{{dockerised-svr}}",
+          "value": "{{dockerised-svr}}"
         }
       }
     ],

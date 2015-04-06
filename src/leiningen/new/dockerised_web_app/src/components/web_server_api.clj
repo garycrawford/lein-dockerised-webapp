@@ -27,7 +27,7 @@
           view-fn  (get-in response [:body :view :fn])
           model    (get-in response [:body :model])]
       (if (and view-fn model)
-        (assoc response :body (view-fn model)) 
+        (assoc response :body (view-fn model))
         response))))
 
 (defn create-handler
