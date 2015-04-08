@@ -6,16 +6,27 @@
 (defn component-files
   [data {:keys [db]}]
   (let [files [(when (= db :mongodb)
-                 ["src/{{sanitized}}/components/mongo_connection.clj" (render "src/components/mongo_connection.clj" data)])
-                 ["src/{{sanitized}}/components/web_server.clj" (render "src/components/web_server_site.clj" data)]
-                 ["src/{{sanitized}}/components/system.clj" (render "src/components/system.clj" data)]
-                 ["src/{{sanitized}}/components/metrics_reporter.clj" (render "src/components/metrics_reporter.clj" data)]]]
+                 ["src/{{sanitized}}/components/mongodb/core.clj" (render "src/components/mongodb/core.clj" data)])
+               (when (= db :mongodb)
+                 ["src/{{sanitized}}/components/mongodb/lifecycle.clj" (render "src/components/mongodb/lifecycle.clj" data)])
+               (if (= db :mongodb)
+                 ["src/{{sanitized}}/components/jetty/lifecycle.clj" (render "src/components/jetty/lifecycle_site_ext.clj" data)]
+                 ["src/{{sanitized}}/components/jetty/lifecycle.clj" (render "src/components/jetty/lifecycle_site_int.clj" data)])
+               ["src/{{sanitized}}/components/system.clj" (render "src/components/system.clj" data)]
+               ["src/{{sanitized}}/components/graphite/lifecycle.clj" (render "src/components/graphite/lifecycle.clj" data)]]]
     (remove nil? files)))
 
 (defn controllers-files
-  [data]
-  [["src/{{sanitized}}/controllers/home.clj" (render "src/controllers/home_site.clj" data)]
-   ["src/{{sanitized}}/controllers/healthcheck.clj" (render "src/controllers/healthcheck.clj" data)]])
+  [data {:keys [db]}]
+  (let [files
+        [(when (= db :mongodb)
+           ["src/{{sanitized}}/controllers/home/lifecycle.clj" (render "src/controllers/home/lifecycle.clj" data)])
+         (if (= db :mongodb)
+           ["src/{{sanitized}}/controllers/home/core.clj" (render "src/controllers/home/core_site_ext.clj" data)]
+           ["src/{{sanitized}}/controllers/home/core.clj" (render "src/controllers/home/core_site_int.clj" data)])
+         ["src/{{sanitized}}/controllers/healthcheck/lifecycle.clj" (render "src/controllers/healthcheck/lifecycle.clj" data)]
+         ["src/{{sanitized}}/controllers/healthcheck/core.clj" (render "src/controllers/healthcheck/core_site.clj" data)]]]
+    (remove nil? files)))
 
 (defn models-files
   [data]
@@ -30,7 +41,8 @@
 
 (defn templates-files
   [data]
-  [["resources/templates/home/about.mustache" (render "resources/templates/home/about.mustache" data)]
+  [["resources/templates/home/introduction.mustache" (render "resources/templates/home/introduction.mustache" data)]
+   ["resources/templates/home/welcome.mustache" (render "resources/templates/home/welcome.mustache" data)]
    ["resources/templates/healthcheck/healthcheck-list.mustache" (render "resources/templates/healthcheck/healthcheck-list.mustache" data)]
    ["resources/templates/shared/default.mustache" (render "resources/templates/shared/default.mustache" data)]
    ["resources/templates/shared/header.mustache" (render "resources/templates/shared/header.mustache" data)]
@@ -39,18 +51,35 @@
 (defn src-files
   [data] 
   [["src/{{sanitized}}/zygote.clj" (render "src/zygote.clj" data)]
-   ["src/{{sanitized}}/logging_config.clj" (render "src/logging_config.clj" data)]])
+   ["src/{{sanitized}}/logging_config.clj" (render "src/logging_config.clj" data)]
+   ["src/{{sanitized}}/responses.clj" (render "src/responses.clj" data)]])
 
 (defn public-files
   [data]
   [["resources/public/css/styles.css" (render "resources/public/css/styles.css" data)]])
 
 (defn test-files
-  [data]
-  [["test/{{sanitized}}/unit/components/metrics_reporter.clj" (render "test/unit/components/metrics_reporter.clj" data)]
-   ["test/{{sanitized}}/unit/controllers/home.clj" (render "test/unit/controllers/home.clj" data)]
-   ["test/{{sanitized}}/unit/controllers/healthcheck.clj" (render "test/unit/controllers/healthcheck.clj" data)]
-   ["test/{{sanitized}}/integration/controllers/home.clj" (render "test/integration/controllers/home.clj" data)]])
+  [data {:keys [db]}]
+  (let [files
+        [(if (= db :mongodb)
+           ["test/{{sanitized}}/unit/controllers/home/core.clj" (render "test/unit/controllers/home/core_site_ext.clj" data)]
+           ["test/{{sanitized}}/unit/controllers/home/core.clj" (render "test/unit/controllers/home/core_site_int.clj" data)])
+         ["test/{{sanitized}}/unit/controllers/healthcheck/core.clj" (render "test/unit/controllers/healthcheck/core.clj" data)]
+         ["test/{{sanitized}}/unit/components/graphite/lifecycle.clj" (render "test/unit/components/graphite/lifecycle.clj" data)]]]
+    (remove nil? files)))
+
+(defn test-files
+  [data {:keys [db]}]
+  (let [files
+        [(if (= db :mongodb)
+           ["test/{{sanitized}}/integration/controllers/home/core.clj" (render "test/integration/controllers/home/core_site_ext.clj" data)]
+           ["test/{{sanitized}}/integration/controllers/home/core.clj" (render "test/integration/controllers/home/core_site_int.clj" data)])
+         (if (= db :mongodb)
+           ["test/{{sanitized}}/unit/controllers/home/core.clj" (render "test/unit/controllers/home/core_site_ext.clj" data)]
+           ["test/{{sanitized}}/unit/controllers/home/core.clj" (render "test/unit/controllers/home/core_site_int.clj" data)])
+         ["test/{{sanitized}}/unit/components/graphite/lifecycle.clj" (render "test/unit/components/graphite/lifecycle.clj" data)]
+         ["test/{{sanitized}}/unit/controllers/healthcheck/core.clj" (render "test/unit/controllers/healthcheck/core.clj" data)]]]
+    (remove nil? files)))
 
 (defn dashboards-files
   [data]
@@ -79,12 +108,12 @@
 (defn site-files
   [data args]
   (concat (src-files data)
-          (test-files data)
+          (test-files data args)
           (dashboards-files data)
           (resources-files data)
           (dev-files data)
           (project-files data)
-          (controllers-files data)
+          (controllers-files data args)
           (views-files data)
           (models-files data)
           (templates-files data)

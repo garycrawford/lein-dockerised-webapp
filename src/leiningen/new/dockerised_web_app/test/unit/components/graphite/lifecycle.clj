@@ -1,6 +1,6 @@
-(ns {{ns-name}}.unit.components.metrics-reporter
+(ns {{ns-name}}.unit.components.graphite.lifecycle
   (:require [midje.sweet :refer :all]
-            [{{ns-name}}.components.metrics-reporter :refer :all]
+            [{{ns-name}}.components.graphite.lifecycle :refer :all]
             [clojure.test.check :as tc]
             [clojure.test.check.generators :as gen]
             [clojure.test.check.properties :as prop]

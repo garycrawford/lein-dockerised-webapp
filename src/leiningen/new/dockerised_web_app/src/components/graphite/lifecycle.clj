@@ -1,4 +1,4 @@
-(ns {{ns-name}}.components.metrics-reporter
+(ns {{ns-name}}.components.graphite.lifecycle
   (:require [com.stuartsierra.component :as component]
             [environ.core :refer [env]]
             [metrics.reporters.graphite :as graphite]

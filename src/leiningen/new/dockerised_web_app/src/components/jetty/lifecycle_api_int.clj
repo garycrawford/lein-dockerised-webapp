@@ -1,4 +1,4 @@
-(ns {{ns-name}}.components.web-server
+(ns {{ns-name}}.components.jetty.lifecycle
   (:require [com.stuartsierra.component :as component]
             [metrics.ring.instrument :as ring]
             [ring.adapter.jetty :as jetty]
@@ -8,13 +8,13 @@
             [ring.util.response :as util]
             [scenic.routes :as scenic]
             [taoensso.timbre :refer [info]]
-            [{{ns-name}}.controllers.home :as home]
-            [{{ns-name}}.controllers.healthcheck :as healthcheck]
+            [{{ns-name}}.controllers.home.core :as home]
+            [{{ns-name}}.controllers.healthcheck.core :as healthcheck]
             [robert.hooke :refer  [prepend append]]))
 
-(def routes-map
-  {:home        (fn [_] (home/index))
-   :healthcheck (fn [_] (healthcheck/index))})
+(def routes-map {:home-get    (fn [_] (home/index-get))
+                 :home-post   (fn [{:keys [params]}] (home/index-post params))
+                 :healthcheck (fn [_] (healthcheck/index))})
 
 (def routes (scenic/load-routes-from-file "routes.txt"))
 

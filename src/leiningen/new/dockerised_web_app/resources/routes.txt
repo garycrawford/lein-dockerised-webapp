@@ -1,2 +1,3 @@
-GET /            home
-GET /healthcheck healthcheck
+GET  /            home-get
+POST /            home-post
+GET  /healthcheck healthcheck

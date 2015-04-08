@@ -18,8 +18,9 @@
      :ns-name ns-name
      :sanitized (name-to-path name)
      :year (str (.get (java.util.Calendar/getInstance) java.util.Calendar/YEAR))
-     :person-template "{{person}}"
+     :name-template "{{name}}"
      :location-template "{{location}}"
+     :anti-forgery-field "{{{anti-forgery-field}}}"
      :healthcheck-list-template (healthcheck-list-template)
      :title-template "{{title}}"
      :page-template (page-template)
@@ -57,8 +58,8 @@
         "Usage: lein new dockerised-web-app <project-name> <type> [options]"
         ""
         "Types:"
-        "  api      Start a new server"
-        "  site     Stop an existing server"
+        "  api      Create a new web api"
+        "  site     Create a new site"
         ""
         "Options:"
         options-summary

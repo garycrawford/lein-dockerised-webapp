@@ -1,4 +1,4 @@
-(ns {{ns-name}}.components.mongo-connection
+(ns {{ns-name}}.components.mongodb.lifecycle
   (:require [com.stuartsierra.component :as component]
             [environ.core :refer [env]]
             [monger.core :as mg]
@@ -10,29 +10,29 @@
   (if conn
     this
     (let [uri (env :mongodb-uri)
-          {:keys [conn]} (mg/connect-via-uri uri)]
-      (assoc this :conn conn))))
+          {:keys [db conn]} (mg/connect-via-uri uri)]
+      (assoc this :db db :conn conn))))
 
 (defn stop
   [{:keys [conn] :as this}]
   (if conn
    (do
      (mg/disconnect conn)
-     (dissoc this :conn))
+     (dissoc this :db :conn))
    this))
 
-(defrecord MongoConnection []
+(defrecord MongoDB []
   component/Lifecycle
   (start [this]
     (start this))
   (stop [this]
     (stop this)))
 
-(defn new-mongo-connection
+(defn new-mongodb
   []
-  (map->MongoConnection {}))
+  (map->MongoDB {}))
 
-(prepend start (info :mongo-connection :connecting))
-(append  start (info :mongo-connection :connected))
-(prepend stop  (info :mongo-connection :disconnecting))
-(append  stop  (info :mongo-connection :disconnected))
+(prepend start (info :mongodb :connecting))
+(append  start (info :mongodb :connected))
+(prepend stop  (info :mongodb :disconnecting))
+(append  stop  (info :mongodb :disconnected))

@@ -98,22 +98,24 @@
 
 (defn system-ns-str
   [ns-name {:keys [db]}]
-  (let [template (-> ["(ns %1$s.components.system"                                                   always
-                      "  (:require [com.stuartsierra.component :as component]"                       always
-                      "            [metrics.core :refer [new-registry]]"                             always
-                      "            [metrics.jvm.core :as jvm]"                                       always
-                      "            [%1$s.components.metrics-reporter :refer [new-metrics-reporter]]" always
-                      "            [%1$s.components.mongo-connection :refer [new-mongo-connection]]" #(mongodb? db)
-                      "            [%1$s.logging-config]"                                            always
-                      "            [%1$s.components.web-server :refer [new-web-server]]))"           always]
+  (let [template (-> ["(ns %1$s.components.system"                                                     always
+                      "  (:require [com.stuartsierra.component :as component]"                         always
+                      "            [metrics.core :refer [new-registry]]"                               always
+                      "            [metrics.jvm.core :as jvm]"                                         always
+                      "            [%1$s.components.graphite.lifecycle :refer [new-metrics-reporter]]" always
+                      "            [%1$s.components.mongodb.lifecycle :refer [new-mongodb]]"           #(mongodb? db)
+                      "            [%1$s.components.jetty.lifecycle :refer [new-web-server]]"          always
+                      "            [%1$s.controllers.home.lifecycle :refer [new-home-controller]]"     #(mongodb? db)
+                      "            [%1$s.logging-config]))"                                            always]
                      construct-template)]
     (format template ns-name)))
 
 (defn system-comp-list-str
   [{:keys [db]}]
   (-> ["(def components [:web-server"         always
-       "                 :mongo-connection"   #(mongodb? db)
+       "                 :mongodb"            #(mongodb? db)
        "                 :metrics-registry"   always
+       "                 :home"               #(mongodb? db)
        "                 :metrics-reporter])" always]
       construct-template))
 
@@ -125,9 +127,11 @@
                       "  (let [metrics-registry (new-registry)]"                                             always
                       "    (jvm/instrument-jvm metrics-registry)"                                            always
                       "    (map->Quotations-Web-System"                                                      always
-                      "     {:web-server       (component/using (new-web-server) [:metrics-registry])"       always
-                      "      :mongo-connection (new-mongo-connection)"                                       #(mongodb? db)
+                      "     {:web-server       (component/using (new-web-server) [:metrics-registry :home])" #(mongodb? db)
+                      "     {:web-server       (component/using (new-web-server) [:metrics-registry])"       (complement #(mongodb? db))
+                      "      :mongodb          (new-mongodb)"                                                #(mongodb? db)
                       "      :metrics-reporter (component/using (new-metrics-reporter) [:metrics-registry])" always
+                      "      :home             (component/using (new-home-controller) [:mongodb])"           #(mongodb? db)
                       "      :metrics-registry  metrics-registry})))"                                        always]
                      construct-template)]
     (format template ns-name)))
