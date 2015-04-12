@@ -8,17 +8,23 @@
             [ring.util.response :as util]
             [scenic.routes :as scenic]
             [taoensso.timbre :refer [info]]
-            [{{ns-name}}.controllers.home.core :as home]
+            [{{ns-name}}.controllers.api.core :as api]
+            [{{ns-name}}.controllers.people.core :as people]
             [{{ns-name}}.controllers.healthcheck.core :as healthcheck]
             [robert.hooke :refer  [prepend append]]))
 
-(defn routes-map
-  [{:keys [home]}]
-  {:home-get    (fn [_] (home/index-get home))
-   :home-post   (fn [{:keys [params]}] (home/index-post home params))
-   :healthcheck (fn [_] (healthcheck/index))})
-
 (def routes (scenic/load-routes-from-file "routes.txt"))
+
+(defn routes-map
+  [{:keys [people]}]
+  {:entry-point-redirect (fn [_] (util/redirect "/api"))
+   :entry-point   (fn [_] (api/entry-point))
+   :list-people   (fn [_] (people/list-people people))
+   :create-person (fn [{:keys [params]}] (people/create-person people params))
+   :read-person   (fn [{:keys [params]}] (people/read-person people (:id params)))
+   :update-person (fn [{:keys [params]}] (people/update-person people params))
+   :delete-person (fn [{:keys [params]}] (people/delete-person people (:id params)))
+   :healthcheck   (fn [_] (healthcheck/index))})
 
 (def jetty-config {:port 1234 :join? false})
 

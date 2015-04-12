@@ -20,10 +20,11 @@
   [data {:keys [db]}]
   (let [files
         [(when (= db :mongodb)
-           ["src/{{sanitized}}/controllers/home/lifecycle.clj" (render "src/controllers/home/lifecycle.clj" data)])
+           ["src/{{sanitized}}/controllers/people/lifecycle.clj" (render "src/controllers/people/lifecycle.clj" data)])
          (if (= db :mongodb)
-           ["src/{{sanitized}}/controllers/home/core.clj" (render "src/controllers/home/core_api_ext.clj" data)]
-           ["src/{{sanitized}}/controllers/home/core.clj" (render "src/controllers/home/core_api_int.clj" data)])
+           ["src/{{sanitized}}/controllers/people/core.clj" (render "src/controllers/people/core_api_ext.clj" data)]
+           ["src/{{sanitized}}/controllers/people/core.clj" (render "src/controllers/people/core_api_int.clj" data)])
+         ["src/{{sanitized}}/controllers/api/core.clj" (render "src/controllers/api/core.clj" data)]
          ["src/{{sanitized}}/controllers/healthcheck/lifecycle.clj" (render "src/controllers/healthcheck/lifecycle.clj" data)]
          ["src/{{sanitized}}/controllers/healthcheck/core.clj" (render "src/controllers/healthcheck/core_api.clj" data)]]]
     (remove nil? files)))
@@ -58,9 +59,9 @@
 (defn test-files
   [data {:keys [db]}]
   (let [files
-        [(if (= db :mongodb)
-           ["test/{{sanitized}}/unit/controllers/home/core.clj" (render "test/unit/controllers/home/core_api_ext.clj" data)]
-           ["test/{{sanitized}}/unit/controllers/home/core.clj" (render "test/unit/controllers/home/core_api_int.clj" data)])
+        [;(if (= db :mongodb)
+         ;  ["test/{{sanitized}}/unit/controllers/home/core.clj" (render "test/unit/controllers/home/core_api_ext.clj" data)]
+         ;  ["test/{{sanitized}}/unit/controllers/home/core.clj" (render "test/unit/controllers/home/core_api_int.clj" data)])
          ["test/{{sanitized}}/unit/controllers/healthcheck/core.clj" (render "test/unit/controllers/healthcheck/core.clj" data)]
          ["test/{{sanitized}}/unit/components/graphite/lifecycle.clj" (render "test/unit/components/graphite/lifecycle.clj" data)]]]
     (remove nil? files)))
@@ -72,7 +73,7 @@
 
 (defn resources-files
   [data]
-  [["resources/routes.txt" (render "resources/routes.txt")]])
+  [["resources/routes.txt" (render "resources/routes_api.txt")]])
 
 (defn dev-files
   [data]

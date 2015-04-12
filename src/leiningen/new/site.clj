@@ -88,7 +88,7 @@
 
 (defn resources-files
   [data]
-  [["resources/routes.txt" (render "resources/routes.txt")]])
+  [["resources/routes.txt" (render "resources/routes_site.txt")]])
 
 (defn dev-files
   [data]

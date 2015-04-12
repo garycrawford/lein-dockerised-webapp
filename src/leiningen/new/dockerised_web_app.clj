@@ -5,36 +5,30 @@
             [leiningen.new.api :refer [api-files]]
             [leiningen.new.site :refer [site-files]]
             [clojure.string :as string]
-            [leiningen.new.common-templates :refer :all]))
+            [leiningen.new.common-api-templates :refer [api-var-map]]
+            [leiningen.new.common-site-templates :refer [site-var-map]]))
 
 (def render (renderer "dockerised-web-app"))
 
 (defn template-data
-  [name options]
+  [name var-map-fn options]
   (let [ns-name (sanitize-ns name)
         docker-name (string/replace name #"-" "")
         dockerised-svr (str (->PascalCase (sanitize-ns name)) "DevSvr")]
-    {:name name
-     :ns-name ns-name
-     :sanitized (name-to-path name)
-     :year (str (.get (java.util.Calendar/getInstance) java.util.Calendar/YEAR))
-     :name-template "{{name}}"
-     :location-template "{{location}}"
-     :anti-forgery-field "{{{anti-forgery-field}}}"
-     :healthcheck-list-template (healthcheck-list-template)
-     :title-template "{{title}}"
-     :page-template (page-template)
-     :system-ns (system-ns-str ns-name options)
-     :system-comp-list (system-comp-list-str options)
-     :system-dep-graph (system-dep-graph ns-name options)
-     :project-deps (project-deps options)
-     :dockerised-svr dockerised-svr
-     :docker-compose (docker-compose docker-name dockerised-svr ns-name options)
-     :dev-profile (dev-profile ns-name dockerised-svr options)}))
+    (merge {:name name
+            :ns-name ns-name
+            :sanitized (name-to-path name)
+            :year (str (.get (java.util.Calendar/getInstance) java.util.Calendar/YEAR))
+            :name-template "{{name}}"
+            :location-template "{{location}}"
+            :anti-forgery-field "{{{anti-forgery-field}}}"
+            :title-template "{{title}}"
+            :dockerised-svr dockerised-svr}
+          (var-map-fn ns-name docker-name dockerised-svr options))))
 
 (defn create-project
-  [name files-fn options]
-  (let [data (template-data name options)
+  [name files-fn var-map-fn options]
+  (let [data (template-data name var-map-fn options)
         files (files-fn data options)]
      (apply ->files data files)))
 
@@ -85,6 +79,6 @@
    
      ;; Execute program with options
      (case (first arguments)
-       "api" (create-project name api-files options)
-       "site" (create-project name site-files options)
+       "api" (create-project name api-files api-var-map options)
+       "site" (create-project name site-files site-var-map options)
        (exit 1 (usage summary))))))

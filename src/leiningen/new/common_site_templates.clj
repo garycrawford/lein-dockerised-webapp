@@ -1,4 +1,4 @@
-(ns leiningen.new.common-templates
+(ns leiningen.new.common-site-templates
   (:require [camel-snake-kebab.core :refer [->PascalCase]]
             [clojure.tools.cli :refer  [parse-opts]]
             [leiningen.new.api :refer [api-files]]
@@ -93,6 +93,7 @@
        "                [prismatic/schema \"0.4.0\"]"                                           always
        "                [robert/hooke \"1.3.0\"]"                                               always
        "                [com.novemberain/monger \"2.1.0\"]"                                     #(mongodb? db)
+       "                [jstrutz/hashids \"1.0.1\"]"                                            #(mongodb? db)
        "                [de.ubercode.clostache/clostache \"1.4.0\"]]"                           always]
       construct-template))
 
@@ -153,3 +154,14 @@
         "  </div>"
         "{{>footer}}"]
        (string/join \newline)))
+
+(defn site-var-map
+  [ns-name docker-name dockerised-svr options]
+  {:healthcheck-list-template (healthcheck-list-template)
+   :page-template (page-template)
+   :system-ns (system-ns-str ns-name options)
+   :system-comp-list (system-comp-list-str options)
+   :system-dep-graph (system-dep-graph ns-name options)
+   :project-deps (project-deps options)
+   :docker-compose (docker-compose docker-name dockerised-svr ns-name options)
+   :dev-profile (dev-profile ns-name dockerised-svr options)})

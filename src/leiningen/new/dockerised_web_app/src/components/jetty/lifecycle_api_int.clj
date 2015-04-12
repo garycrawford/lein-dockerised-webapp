@@ -8,13 +8,22 @@
             [ring.util.response :as util]
             [scenic.routes :as scenic]
             [taoensso.timbre :refer [info]]
-            [{{ns-name}}.controllers.home.core :as home]
+            [{{ns-name}}.controllers.people.core :as people]
+            [{{ns-name}}.controllers.api.core :as api]
             [{{ns-name}}.controllers.healthcheck.core :as healthcheck]
             [robert.hooke :refer  [prepend append]]))
 
-(def routes-map {:home-get    (fn [_] (home/index-get))
-                 :home-post   (fn [{:keys [params]}] (home/index-post params))
-                 :healthcheck (fn [_] (healthcheck/index))})
+; (def routes-map {:home-get    (fn [_] (home/index-get))
+;                  :home-post   (fn [{:keys [params]}] (home/index-post params))
+;                  :healthcheck (fn [_] (healthcheck/index))})
+
+(def routes-map {:entry-point   (fn [_] (api/entry-point))
+                 :list-people   (fn [_] (people/list-people))
+                 :create-person (fn [{:keys [params]}] (people/create-person params))
+                 :read-person   (fn [{:keys [params]}] (people/read-person 1))
+                 :update-person (fn [{:keys [params]}] (people/update-person params))
+                 :delete-person (fn [{:keys [params]}] (people/delete-person 1))
+                 :healthcheck   (fn [_] (healthcheck/index))})
 
 (def routes (scenic/load-routes-from-file "routes.txt"))
 
