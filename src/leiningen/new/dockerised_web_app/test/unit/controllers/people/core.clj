@@ -10,20 +10,20 @@
                    (= value))))
 
 (facts "when listing people"
-  (fact "an empty result"
+  (fact "a result can be an empty array"
     (list-people {:mongodb ..mongodb..}) => (result-checker []) 
     (provided
       (find-by-query ..mongodb.. "people" {}) => []))
   
-  (fact "an single result"
+  (fact "a result can be a non-empty array"
     (list-people {:mongodb ..mongodb..}) => (result-checker [{:id "id" :name "name" :location "location"}])
     (provided
       (find-by-query ..mongodb.. "people" {}) => [{:id "id" :name "name" :location "location"}]))
 
-  (fact "additional fields aren't returned"
-    (list-people {:mongodb ..mongodb..}) => (result-checker [{:id "id"}])
+  (fact "only id, name and location fields are returned"
+    (list-people {:mongodb ..mongodb..}) => (result-checker [{:id "id" :name "name" :location "location"}])
     (provided
-      (find-by-query ..mongodb.. "people" {}) => [{:id "id" :something :else :another :thing}])))
+      (find-by-query ..mongodb.. "people" {}) => [{:id "id" :name "name" :location "location" :something :else :another :thing}])))
 
 (facts "when creating a person"
   (fact "success result will have a 201 status code"
@@ -31,13 +31,17 @@
     (provided
       (insert ..mongodb.. "people" {:name "name" :location "location"}) => {:id "id"}))
   
-  (fact "success result will have a location and content type headers"
-    (create-person {:mongodb ..mongodb..} {:name "name" :location "location"}) => (contains {:headers {"Location" "/api/people/id"
-                                                                                                       "Content-Type" "application/json"}})
+  (fact "success result will have a populated location header"
+    (create-person {:mongodb ..mongodb..} {:name "name" :location "location"}) => (contains {:headers (contains {"Location" "/api/people/id"})})
+    (provided
+      (insert ..mongodb.. "people" {:name "name" :location "location"}) => {:id "id"}))
+  
+  (fact "success result will have an application/json content type header"
+    (create-person {:mongodb ..mongodb..} {:name "name" :location "location"}) => (contains {:headers (contains {"Content-Type" "application/json"})})
     (provided
       (insert ..mongodb.. "people" {:name "name" :location "location"}) => {:id "id"})))
 
-(facts "when creating a person"
+(facts "when reading a person"
   (fact "success will result in a 200 status code"
     (read-person {:mongodb ..mongodb..} ..id..) => (contains {:status 200})
     (provided
