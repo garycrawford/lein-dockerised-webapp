@@ -15,10 +15,10 @@
     (json-ok {:result (map whitelist people)})))
 
 (defn create-person
-  [{:keys [mongodb]} {:keys [name location] :as params}]
+  [{:keys [mongodb]} {:keys [name location]}]
   (let [{:keys [id]} (m/insert mongodb collection {:name name :location location})]
     (-> (created (str "/api/people/" id))
-        (header "Location" (str "/api/people/" id)))))
+        (header "Content-Type" "application/json"))))
 
 (defn read-person
   [{:keys [mongodb]} id]
@@ -30,11 +30,11 @@
   [{:keys [mongodb]} {:keys [id name location]}]
   (m/update mongodb collection {:name name :location location :id id})
   (-> (status {} 204)
-      (assoc :headers {"Content-Type" "application/json"}) 
+      (header "Content-Type" "application/json")
       (header "Location" (str "/api/people/" id))))
 
 (defn delete-person
   [{:keys [mongodb]} id]
   (m/delete mongodb collection id)
   (-> (status {} 204)
-      (assoc :headers {"Content-Type" "application/json"})))
+      (header "Content-Type" "application/json")))
