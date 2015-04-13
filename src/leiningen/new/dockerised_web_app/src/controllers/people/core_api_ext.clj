@@ -29,9 +29,8 @@
 (defn update-person
   [{:keys [mongodb]} {:keys [id name location]}]
   (m/update mongodb collection {:name name :location location :id id})
-  (-> {}
-      (assoc :headers {"Content-Type" "application/json"})
-      (status 204)
+  (-> (status {} 204)
+      (assoc :headers {"Content-Type" "application/json"}) 
       (header "Location" (str "/api/people/" id))))
 
 (defn delete-person

@@ -59,9 +59,10 @@
 (defn test-files
   [data {:keys [db]}]
   (let [files
-        [;(if (= db :mongodb)
-         ;  ["test/{{sanitized}}/unit/controllers/home/core.clj" (render "test/unit/controllers/home/core_api_ext.clj" data)]
-         ;  ["test/{{sanitized}}/unit/controllers/home/core.clj" (render "test/unit/controllers/home/core_api_int.clj" data)])
+        [(when (= db :mongodb)
+           ["test/{{sanitized}}/unit/components/mongodb/core.clj" (render "test/unit/components/mongodb/core.clj" data)])
+         (when (= db :mongodb)
+           ["test/{{sanitized}}/unit/controllers/people/core.clj" (render "test/unit/controllers/people/core.clj" data)])
          ["test/{{sanitized}}/unit/controllers/healthcheck/core.clj" (render "test/unit/controllers/healthcheck/core.clj" data)]
          ["test/{{sanitized}}/unit/components/graphite/lifecycle.clj" (render "test/unit/components/graphite/lifecycle.clj" data)]]]
     (remove nil? files)))
