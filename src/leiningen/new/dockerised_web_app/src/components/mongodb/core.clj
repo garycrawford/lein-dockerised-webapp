@@ -38,15 +38,14 @@
 
 (defn version-doc
   [doc]
-  {:current (assoc doc :revision 0)
+  {:current (-> doc (assoc :revision 0) (dissoc :id))
    :previous []})
 
 (defn update-versioned-doc
   [{:keys [current previous]} update-doc]
   (-> {}
       (assoc :previous (conj previous current))
-      (assoc :current (merge current update-doc))
-      (dissoc-in [:current :id])
+      (assoc :current (merge current (dissoc update-doc :id)))
       (update-in [:current :revision] inc)))
 
 (defn find-one-by-query
