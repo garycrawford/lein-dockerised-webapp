@@ -55,18 +55,3 @@
   (fact "previous versioned docs will not have an :id"
     (let [prev-doc (version-doc {:id "id" :name "gary"})]
       (update-versioned-doc prev-doc {:name "erin"}) => (contains {:previous (just (just {:name "gary" :revision 0}))}))))
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
