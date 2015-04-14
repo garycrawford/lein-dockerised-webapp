@@ -81,10 +81,3 @@
 (defn delete
   [mongodb collection id]
   (update mongodb collection {:id id :deleted true}))
-
-
-
-
-
-
-
